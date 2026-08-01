@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://flowstate.andre-kempf.com/sitemap.xml
