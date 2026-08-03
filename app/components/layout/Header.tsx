@@ -1,4 +1,4 @@
-import Brand from "./Brand";
+import BrandLogo from "./BrandLogo";
 import Image from "next/image";
 
 export default function Header() {
@@ -6,7 +6,7 @@ export default function Header() {
     <header className="h-20 border-b border-border backdrop-blur-md p-4 flex items-center md:justify-end justify-between sticky top-0 z-50">
       {/* Brand Element */}
       <div className="md:hidden flex items-center gap-3">
-        <Brand />
+        <BrandLogo />
       </div>
       {/* User Profil */}
       <div className="flex items-center gap-3">
