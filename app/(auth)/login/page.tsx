@@ -37,8 +37,10 @@ export default function LoginPage() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const defaultErrorMessage = "An unexpected error has occurred.";
 
     try {
+      // Attempt to sign in using Auth.js credentials provider
       const res = await signIn("credentials", {
         email,
         password,
@@ -46,18 +48,26 @@ export default function LoginPage() {
       });
 
       if (res?.error) {
+        // Handle specific authentication errors
         if (res.error === "CredentialsSignin") {
           setError("Incorrect email address or password.");
         } else {
-          setError("An unexpected error has occurred.");
+          setError(defaultErrorMessage);
         }
-        setLoading(false);
       } else {
+        // Redirect user and refresh router cache on success
         router.push("/");
         router.refresh();
+        return;
       }
-    } catch {
-      setError("Connection error. Please try again later.");
+    } catch (err: any) {
+      // Handle network or connection errors vs unexpected errors
+      if (err?.message?.includes("fetch") || err?.name === "TypeError") {
+        setError("Server error: API endpoint not available");
+      } else {
+        setError(defaultErrorMessage);
+      }
+    } finally {
       setLoading(false);
     }
   };
