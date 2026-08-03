@@ -2,5 +2,5 @@
  * Landing page
  */
 export default function Home() {
-  return <section></section>;
+  return <div className="space-y-6">Home</div>;
 }

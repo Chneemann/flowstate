@@ -1,41 +1,46 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-// Load Google Fonts as CSS custom variables
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-  preload: false,
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-  preload: false,
-});
+import Sidebar from "./components/layout/Sidebar";
+import Header from "./components/layout/Header";
+import Navbar from "./components/layout/Navbar";
 
 /**
- * Global page metadata and branding icons
+ * Global page metadata
  */
 export const metadata: Metadata = {
-  title: "Flowstate",
-  description: "Boost your productivity and enter the flow.",
+  title: "Flowstate - Modern Kanban",
+  description: "Dein High-Performance Workflow Dashboard",
 };
 
+/**
+ * Root application layout providing global shell UI
+ */
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="de" className="dark h-full">
+      <body className="flex h-dvh overflow-hidden">
+        {/* Sidebar (Desktop only) */}
+        <div className="hidden md:flex ">
+          <Sidebar />
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden pb-16 md:pb-0">
+          <Header />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+            {children}
+          </main>
+
+          {/* Mobile Navbar (Mobile only) */}
+          <div className="md:hidden flex">
+            <Navbar />
+          </div>
+        </div>
+      </body>
     </html>
   );
 }
