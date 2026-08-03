@@ -1,15 +1,15 @@
 /**
- * @file db/index.ts (oder ähnlich)
- * @description Initializes the SQLite database connection using better-sqlite3 and sets up the Drizzle ORM instance with the provided schema.
+ * @file db/index.ts
+ * @description Initializes the PostgreSQL database connection using postgres-js and configures the Drizzle ORM instance.
  */
 
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/postgres-js";
 import * as schema from "./schema";
+import postgres from "postgres";
 
-const sqlite = new Database("./sqlite.db");
+const client = postgres(process.env.DATABASE_URL!, { prepare: false });
 
 /**
- * The Drizzle ORM database instance configured for SQLite with type definitions from the schema.
+ * The Drizzle ORM database instance configured for PostgreSQL with type definitions from the schema.
  */
-export const db = drizzle(sqlite, { schema });
+export const db = drizzle(client, { schema });

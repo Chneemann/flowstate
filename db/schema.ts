@@ -1,20 +1,18 @@
 /**
- * @file db/schema.ts (oder ähnlich)
- * @description Defines the SQLite database schema for users and exports related TypeScript types using Drizzle ORM.
+ * @file db/schema.ts
+ * @description Defines the PostgreSQL database schema for users using UUIDs, timestamps, and Drizzle ORM.
  */
 
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
  * Database table definition for application users.
  */
-export const usersTable = sqliteTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const usersTable = pgTable("users", {
+  id: uuid("id").defaultRandom().primaryKey(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 /**
