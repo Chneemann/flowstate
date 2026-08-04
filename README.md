@@ -8,7 +8,7 @@ A modern, high-performance Kanban & Workflow web application designed to help yo
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8?style=flat-square&logo=tailwind-css)
 ![Auth.js](https://img.shields.io/badge/Auth.js-v5-purple?style=flat-square)
 ![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=flat-square&logo=drizzle)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-4169E1?style=flat-square&logo=postgresql)
 
 ## 🛠️ Tech Stack
 

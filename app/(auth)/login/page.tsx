@@ -55,9 +55,8 @@ export default function LoginPage() {
           setError(defaultErrorMessage);
         }
       } else {
-        // Redirect user and refresh router cache on success
-        router.push("/");
-        router.refresh();
+        // Redirect user
+        router.push("/summary");
         return;
       }
     } catch (err: any) {
@@ -79,7 +78,7 @@ export default function LoginPage() {
         {/* Header Section */}
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold tracking-tight">Flowstate Login</h1>
-          <p className="text-sm text-muted">Sign in to continue.</p>
+          <p className="text-sm text-foreground-muted">Sign in to continue.</p>
         </div>
 
         {/* Error Notification Banner */}
@@ -95,7 +94,9 @@ export default function LoginPage() {
         {/* Credentials Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block space-y-2">
-            <span className="text-xs font-medium text-muted">E-Mail</span>
+            <span className="text-xs font-medium text-foreground-muted">
+              E-Mail
+            </span>
             <input
               name="email"
               type="email"
@@ -107,7 +108,9 @@ export default function LoginPage() {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium text-muted">Passwort</span>
+            <span className="text-xs font-medium text-foreground-muted">
+              Passwort
+            </span>
             <input
               name="password"
               type="password"
@@ -128,7 +131,7 @@ export default function LoginPage() {
         </form>
 
         {/* Registration Link Footer */}
-        <div className="text-center text-xs text-muted">
+        <div className="text-center text-xs text-foreground-muted">
           Don't have an account yet?{" "}
           <Link href="/register/" className="text-foreground hover:underline">
             Register

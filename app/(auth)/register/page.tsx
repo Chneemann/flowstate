@@ -59,9 +59,9 @@ export default function RegisterPage() {
         throw new Error(data.message || "Something went wrong.");
       }
 
-      // Redirect user and refresh router cache on success
-      router.push("/");
-      router.refresh();
+      // Redirect user
+      router.push("/summary");
+      return;
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -78,7 +78,7 @@ export default function RegisterPage() {
           <h1 className="text-2xl font-bold tracking-tight">
             Create an Account
           </h1>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-foreground-muted">
             Get started with your Flowstate Workspace.
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function RegisterPage() {
         </form>
 
         {/* Back Link Footer */}
-        <div className="text-center text-xs text-muted">
+        <div className="text-center text-xs text-foreground-muted">
           Already have an account?{" "}
           <Link href="/login" className="text-foreground hover:underline">
             Sign In
