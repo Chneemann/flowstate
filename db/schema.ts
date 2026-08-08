@@ -1,9 +1,43 @@
 /**
  * @file db/schema.ts
- * @description Defines the PostgreSQL database schema for users using UUIDs, timestamps, and Drizzle ORM.
+ * @description Defines the PostgreSQL database schema for users, tasks, and task assignees using Drizzle ORM, including custom enums and relations.
  */
 
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+// ==========================================
+// Enums
+// ==========================================
+
+/**
+ * Enumeration representing the current lifecycle status of a task.
+ */
+export const taskStatusEnum = pgEnum("task_status", [
+  "todo",
+  "in_progress",
+  "await_feedback",
+  "done",
+]);
+
+/**
+ * Enumeration representing the priority level of a task.
+ */
+export const taskPriorityEnum = pgEnum("task_priority", [
+  "low",
+  "medium",
+  "high",
+]);
+
+// ==========================================
+// Tables
+// ==========================================
 
 /**
  * Database table definition for application users.
@@ -16,11 +50,43 @@ export const usersTable = pgTable("users", {
 });
 
 /**
- * Represents a user record selected from the database.
+ * Database table definition for application tasks.
  */
-export type User = typeof usersTable.$inferSelect;
+export const tasksTable = pgTable("tasks", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  status: taskStatusEnum("status").default("todo").notNull(),
+  priority: taskPriorityEnum("priority").default("medium").notNull(),
+  dueDate: timestamp("due_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 /**
- * Represents a new user object required for insertion into the database.
+ * Junction table for assigning multiple users to tasks (Many-to-Many).
  */
-export type NewUser = typeof usersTable.$inferInsert;
+export const taskAssigneesTable = pgTable(
+  "task_assignees",
+  {
+    taskId: uuid("task_id")
+      .notNull()
+      .references(() => tasksTable.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    assignedAt: timestamp("assigned_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.taskId, t.userId] }),
+  }),
+);
+
+// ==========================================
+// Type Exports
+// ==========================================
+
+export type Task = typeof tasksTable.$inferSelect;
