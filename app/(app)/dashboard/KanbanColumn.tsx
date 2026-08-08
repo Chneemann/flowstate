@@ -1,33 +1,115 @@
 /**
  * @file dashboard/KanbanColumn.tsx
- * @description Client component rendering an individual kanban column container with its header, task count, action button, and list of task cards.
+ * @description Client component rendering an single kanban column container supporting drag-and-drop task reordering, status updates, and interactive card layouts.
  */
 
 "use client";
 
+import { useState, useTransition } from "react";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import KanbanCard from "./KanbanCard";
-import { KanbanColumnProps } from "@/types/tasks";
+import { KanbanColumnProps, TaskStatus } from "@/types/tasks";
 
 /**
- * Renders a kanban column containing a header with category indicator and counter,
- * an add button, and a sorted list of associated task cards or an empty placeholder.
+ * Renders a kanban column with title indicators, task counters, drag-and-drop event handlers,
+ * and lists of nested KanbanCard items.
  *
- * @param {KanbanColumnProps} props - The component props including column details, task list, and styling options.
+ * @param {KanbanColumnProps} props - The component props including column ID, title, count, tasks, and color configuration.
  * @returns {JSX.Element} The rendered kanban column component.
  */
 export default function KanbanColumn(props: KanbanColumnProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const indicatorColor = props.color ?? "bg-primary";
 
+  /**
+   * Updates the status of a task via a state transition and refreshes the router data.
+   *
+   * @param {string} taskId - The unique identifier of the task being updated.
+   * @param {TaskStatus} targetStatus - The new target status category for the task.
+   */
+  const updateTaskStatus = (taskId: string, targetStatus: TaskStatus) => {
+    startTransition(async () => {
+      try {
+        // TODO: Implement actual API endpoint for updating task status
+        console.log(`Successfully moved task ${taskId} to ${targetStatus}`);
+        router.refresh();
+      } catch (error) {
+        console.error("Error during task status update:", error);
+      }
+    });
+  };
+
+  /**
+   * Handles the drag-over event to allow dropping items onto the column.
+   *
+   * @param {React.DragEvent<HTMLDivElement>} e - The drag event object.
+   */
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingOver(true);
+  };
+
+  /**
+   * Handles the drag-leave event when a dragged item leaves the column bounds.
+   */
+  const handleDragLeave = () => {
+    setIsDraggingOver(false);
+  };
+
+  /**
+   * Initiates the drag action on a task card, storing its ID and current status in the data transfer payload.
+   *
+   * @param {React.DragEvent<HTMLDivElement>} e - The drag event object.
+   * @param {string} taskId - The identifier of the task being dragged.
+   * @param {TaskStatus} currentStatus - The original status category of the task.
+   */
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    taskId: string,
+    currentStatus: TaskStatus,
+  ) => {
+    e.dataTransfer.setData("text/plain", taskId);
+    e.dataTransfer.setData("sourceStatus", currentStatus);
+  };
+
+  /**
+   * Handles dropping a task card onto the column, triggering status updates if valid.
+   *
+   * @param {React.DragEvent<HTMLDivElement>} e - The drop event object.
+   */
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+
+    const taskId = e.dataTransfer.getData("text/plain");
+    const sourceStatus = e.dataTransfer.getData("sourceStatus") as TaskStatus;
+
+    if (!taskId || sourceStatus === props.id) return;
+
+    updateTaskStatus(taskId, props.id);
+  };
+
   return (
-    <div className="w-full flex flex-col rounded-2xl p-4 transition-all duration-300 bg-background-muted/40 border border-border">
+    <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={`w-full flex flex-col rounded-2xl p-4 transition-all duration-300 bg-background-muted/40 border ${
+        isDraggingOver
+          ? "border-primary/80 bg-primary/5 shadow-lg ring-4 ring-primary/10"
+          : "border-border/60 shadow-sm"
+      } ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+    >
       {/* Column Header */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/40">
         <div className="flex items-center gap-2.5">
           <span
             className={`w-2.5 h-2.5 rounded-full shadow-sm ${indicatorColor}`}
           />
-          <h2 className="font-bold text-xs uppercase tracking-wider text-foreground">
+          <h2 className="font-bold text-xs uppercase tracking-wider ">
             {props.title}
           </h2>
           <span className="text-xs bg-card text-foreground-muted px-2 py-0.5 rounded-full font-semibold border border-border/60">
@@ -40,7 +122,6 @@ export default function KanbanColumn(props: KanbanColumnProps) {
       </div>
 
       {/* Card List */}
-
       <div className="flex flex-col gap-3">
         {props.tasks.length === 0 ? (
           <div className="h-28 rounded-xl border border-dashed border-border/80 flex flex-col items-center justify-center text-xs text-foreground-muted/60 bg-card/20 gap-1">
@@ -50,9 +131,15 @@ export default function KanbanColumn(props: KanbanColumnProps) {
           props.tasks.map((task) => (
             <div
               key={task.id}
-              className="group relative bg-card/40 border border-border/80 hover:border-primary/60 p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 space-y-3 hover:-translate-y-0.5"
+              draggable
+              onDragStart={(e) => handleDragStart(e, task.id, task.status)}
+              className="group relative bg-card/40 border border-border/80 hover:border-primary/60 p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 space-y-3 cursor-grab active:cursor-grabbing hover:-translate-y-0.5"
             >
-              <KanbanCard key={task.id} task={task} />
+              <KanbanCard
+                key={task.id}
+                task={task}
+                onStatusChange={updateTaskStatus}
+              />
             </div>
           ))
         )}
