@@ -1,6 +1,6 @@
 /**
  * @file services/task.service.ts
- * @description Business logic service handling task permissions and database queries.
+ * @description Business logic service handling task permissions, database queries, and status updates.
  */
 
 import { db } from "@/db";
@@ -9,6 +9,7 @@ import {
   taskAssigneesTable,
   type Task as DbTask,
 } from "@/db/schema";
+import { TaskStatus } from "@/types/tasks";
 import { and, eq, or, exists } from "drizzle-orm";
 
 /**
@@ -51,5 +52,49 @@ export class TaskService {
       );
 
     return task as DbTask | undefined;
+  }
+
+  /**
+   * Updates a task's status if the user is authorized as either the owner or an assignee.
+   *
+   * @async
+   * @param {string} taskId - The unique identifier of the task to update.
+   * @param {string} userId - The unique identifier of the user performing the update.
+   * @param {TaskStatus} status - The new status to apply to the task.
+   * @returns {Promise<DbTask | null>} The updated task object, or null if the update failed or user is unauthorized.
+   */
+  static async updateStatusIfAuthorized(
+    taskId: string,
+    userId: string,
+    status: TaskStatus,
+  ) {
+    const [updatedTask] = await db
+      .update(tasksTable)
+      .set({
+        status: status,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(tasksTable.id, taskId),
+          or(
+            eq(tasksTable.userId, userId),
+            exists(
+              db
+                .select({ taskId: taskAssigneesTable.taskId })
+                .from(taskAssigneesTable)
+                .where(
+                  and(
+                    eq(taskAssigneesTable.taskId, taskId),
+                    eq(taskAssigneesTable.userId, userId),
+                  ),
+                ),
+            ),
+          ),
+        ),
+      )
+      .returning();
+
+    return (updatedTask as DbTask | undefined) || null;
   }
 }
