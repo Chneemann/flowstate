@@ -25,16 +25,25 @@ export default function KanbanColumn(props: KanbanColumnProps) {
   const indicatorColor = props.color ?? "bg-primary";
 
   /**
-   * Updates the status of a task via a state transition and refreshes the router data.
+   * Updates the status of a specific task via a PATCH API request and refreshes the router state.
    *
-   * @param {string} taskId - The unique identifier of the task being updated.
-   * @param {TaskStatus} targetStatus - The new target status category for the task.
+   * @async
+   * @param {string} taskId - The unique identifier of the task to update.
+   * @param {TaskStatus} targetStatus - The destination status to apply to the task.
    */
   const updateTaskStatus = (taskId: string, targetStatus: TaskStatus) => {
     startTransition(async () => {
       try {
-        // TODO: Implement actual API endpoint for updating task status
-        console.log(`Successfully moved task ${taskId} to ${targetStatus}`);
+        const response = await fetch(`/api/tasks/${taskId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: targetStatus }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update task status");
+        }
+
         router.refresh();
       } catch (error) {
         console.error("Error during task status update:", error);
