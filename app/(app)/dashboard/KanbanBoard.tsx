@@ -9,6 +9,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import KanbanColumn from "./KanbanColumn";
 import { KANBAN_COLUMNS, Task, TaskStatus } from "@/types/tasks";
+import KanbanBoardHeader from "./components/KanbanBoardHeader";
 
 /**
  * Renders the responsive grid container of kanban columns, coordinating state tracking
@@ -61,22 +62,28 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
-      {KANBAN_COLUMNS.map((col) => {
-        const columnTasks = tasks.filter((t) => t.status === col.id);
-        return (
-          <KanbanColumn
-            key={col.id}
-            id={col.id}
-            title={col.title}
-            count={columnTasks.length}
-            tasks={columnTasks}
-            color={col.color}
-            updatingTaskIds={updatingTaskIds}
-            onTaskMove={updateTaskStatus}
-          />
-        );
-      })}
+    <div className="space-y-8">
+      {/* Workspace Header */}
+      <KanbanBoardHeader />
+
+      {/* Kanban Columns Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
+        {KANBAN_COLUMNS.map((col) => {
+          const columnTasks = tasks.filter((t) => t.status === col.id);
+          return (
+            <KanbanColumn
+              key={col.id}
+              id={col.id}
+              title={col.title}
+              count={columnTasks.length}
+              tasks={columnTasks}
+              color={col.color}
+              updatingTaskIds={updatingTaskIds}
+              onTaskMove={updateTaskStatus}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
