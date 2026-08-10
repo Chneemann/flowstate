@@ -44,10 +44,13 @@ export interface KanbanColumnConfig {
 export interface KanbanColumnProps extends KanbanColumnConfig {
   count: number;
   tasks: Task[];
+  updatingTaskIds?: Set<string>;
+  onTaskMove?: (taskId: string, targetStatus: TaskStatus) => void;
 }
 
 export interface KanbanCardProps {
   task: Task;
+  isUpdating?: boolean;
   onStatusChange?: (taskId: string, newStatus: TaskStatus) => void;
 }
 

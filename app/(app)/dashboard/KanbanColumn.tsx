@@ -1,58 +1,27 @@
 /**
  * @file dashboard/KanbanColumn.tsx
- * @description Client component rendering a single kanban column container supporting drag-and-drop drop targets and status updates.
+ * @description Client component rendering a single kanban column container supporting drag-and-drop drop targets, dynamic status updates, and task lists.
  */
 
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import KanbanCard from "./KanbanCard";
 import { KanbanColumnProps, TaskStatus } from "@/types/tasks";
-
 /**
- * Renders a kanban column with title indicators, task counters, drag-and-drop event handlers,
- * and lists of nested KanbanCard items.
+ * Renders an individual kanban column with an indicator, title, item counter,
+ * add-task button, and drag-and-drop target zone containing its associated task cards.
  *
- * @param {KanbanColumnProps} props - The component props including column ID, title, count, tasks, and color configuration.
+ * @param {KanbanColumnProps} props - The component props containing column configurations, tasks, and event callbacks.
  * @returns {JSX.Element} The rendered kanban column component.
  */
 export default function KanbanColumn(props: KanbanColumnProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const indicatorColor = props.color ?? "bg-primary";
 
   /**
-   * Updates the status of a specific task via a PATCH API request and refreshes the router state.
-   *
-   * @async
-   * @param {string} taskId - The unique identifier of the task to update.
-   * @param {TaskStatus} targetStatus - The destination status to apply to the task.
-   */
-  const updateTaskStatus = (taskId: string, targetStatus: TaskStatus) => {
-    startTransition(async () => {
-      try {
-        const response = await fetch(`/api/tasks/${taskId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: targetStatus }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to update task status");
-        }
-
-        router.refresh();
-      } catch (error) {
-        console.error("Error during task status update:", error);
-      }
-    });
-  };
-
-  /**
-   * Handles the drag-over event to allow dropping items onto the column.
+   * Handles the drag-over event to allow items to be dropped into the column.
    *
    * @param {React.DragEvent<HTMLDivElement>} e - The drag event object.
    */
@@ -63,14 +32,14 @@ export default function KanbanColumn(props: KanbanColumnProps) {
   };
 
   /**
-   * Handles the drag-leave event when a dragged item leaves the column bounds.
+   * Resets the drag-over state when the dragged element leaves the column boundary.
    */
   const handleDragLeave = () => {
     setIsDraggingOver(false);
   };
 
   /**
-   * Handles dropping a task card onto the column, triggering status updates if valid.
+   * Handles dropping a task card onto the column, extracting task metadata and triggering the move action.
    *
    * @param {React.DragEvent<HTMLDivElement>} e - The drop event object.
    */
@@ -83,7 +52,7 @@ export default function KanbanColumn(props: KanbanColumnProps) {
 
     if (!taskId || sourceStatus === props.id) return;
 
-    updateTaskStatus(taskId, props.id);
+    props.onTaskMove?.(taskId, props.id);
   };
 
   return (
@@ -95,7 +64,7 @@ export default function KanbanColumn(props: KanbanColumnProps) {
         isDraggingOver
           ? "border-primary/80 bg-primary/5 shadow-lg ring-4 ring-primary/10"
           : "border-border/60 shadow-sm"
-      } ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+      }`}
     >
       {/* Column Header */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/40">
@@ -126,7 +95,8 @@ export default function KanbanColumn(props: KanbanColumnProps) {
             <KanbanCard
               key={task.id}
               task={task}
-              onStatusChange={updateTaskStatus}
+              isUpdating={props.updatingTaskIds?.has(task.id)}
+              onStatusChange={props.onTaskMove}
             />
           ))
         )}
