@@ -1,6 +1,6 @@
 /**
  * @file dashboard/KanbanCard.tsx
- * @description Client component rendering a single kanban card with support for priority indicators, due date alerts, team avatars, and a mobile status dropdown.
+ * @description Client component rendering a single kanban card with native drag-and-drop source handlers, dynamic priority styling, and mobile status dropdown.
  */
 
 "use client";
@@ -55,6 +55,17 @@ export default function KanbanCard({ task, onStatusChange }: KanbanCardProps) {
   );
 
   /**
+   * Initiates the drag action on a task card, storing its ID and current status in the data transfer payload.
+   *
+   * @param {React.DragEvent<HTMLDivElement>} e - The drag event object.
+   */
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("text/plain", task.id);
+    e.dataTransfer.setData("sourceStatus", task.status);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  /**
    * Handles shifting the task to a new status category.
    *
    * @param {React.MouseEvent} e - The mouse event triggered by clicking a column destination.
@@ -69,18 +80,20 @@ export default function KanbanCard({ task, onStatusChange }: KanbanCardProps) {
   };
 
   return (
-    <div className="flex flex-col h-full gap-3">
+    <div
+      draggable
+      onDragStart={handleDragStart}
+      className="group relative bg-card/40 border border-border/80 hover:border-primary/60 p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 space-y-3 cursor-grab active:cursor-grabbing hover:-translate-y-0.5 flex flex-col h-full"
+    >
       {/* --- Card Header (Title & Priority) --- */}
       <div className="flex items-start justify-between gap-2">
-        {/* Title */}
         <h3 className="font-semibold leading-snug group-hover/card:text-primary transition-colors line-clamp-2">
           {task.title}
         </h3>
 
-        {/* Priority Badge */}
         {task.priority && (
           <span
-            className={`gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border-2 ${
+            className={`gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border-2 shrink-0 ${
               task.priority === "high"
                 ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
                 : task.priority === "medium"
@@ -98,9 +111,9 @@ export default function KanbanCard({ task, onStatusChange }: KanbanCardProps) {
         {task.description}
       </p>
 
-      {/* --- Card Footer (Date, Mobile Action Menu, Avatars) --- */}
+      {/* --- Card Footer --- */}
       <div className="flex items-center justify-between pt-3 mt-auto text-xs border-t border-border">
-        {/* Left Side: Date Badge */}
+        {/* Date Badge */}
         {task.dueDate && (
           <div
             className={`group/date relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-border transition-all duration-200 ease-out cursor-default ${
@@ -116,8 +129,6 @@ export default function KanbanCard({ task, onStatusChange }: KanbanCardProps) {
                 month: "short",
               })}
             </span>
-
-            {/* Time displayed when hovering over the badge */}
             <span className="grid grid-cols-[0fr] group-hover/date:grid-cols-[1fr] transition-all duration-200 ease-out">
               <span className="overflow-hidden whitespace-nowrap opacity-0 group-hover/date:opacity-100 transition-opacity duration-200">
                 {new Date(task.dueDate).toLocaleTimeString("de-DE", {
@@ -129,9 +140,8 @@ export default function KanbanCard({ task, onStatusChange }: KanbanCardProps) {
           </div>
         )}
 
-        {/* Right Side: Avatars & Mobile Switcher */}
+        {/* Avatars & Mobile Switcher */}
         <div className="flex items-center gap-2">
-          {/* Avatars */}
           {(task.creator || filteredAssignees.length > 0) && (
             <div className="flex items-center shrink-0 -space-x-2.5 group/avatars hover:space-x-0.5 transition-all duration-300">
               {filteredAssignees.map((assignee, index) => (
@@ -171,7 +181,6 @@ export default function KanbanCard({ task, onStatusChange }: KanbanCardProps) {
               <MoreHorizontal size={14} />
             </button>
 
-            {/* Dropdown Menu */}
             <div
               className={`absolute right-0 bottom-8 z-50 w-50 bg-card border border-border rounded-xl shadow-2xl p-1.5 space-y-1 text-xs origin-bottom-right transition-all duration-200 ease-out ${
                 showMobileActions

@@ -1,6 +1,6 @@
 /**
  * @file dashboard/KanbanColumn.tsx
- * @description Client component rendering an single kanban column container supporting drag-and-drop task reordering, status updates, and interactive card layouts.
+ * @description Client component rendering a single kanban column container supporting drag-and-drop drop targets and status updates.
  */
 
 "use client";
@@ -58,6 +58,7 @@ export default function KanbanColumn(props: KanbanColumnProps) {
    */
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
     setIsDraggingOver(true);
   };
 
@@ -66,22 +67,6 @@ export default function KanbanColumn(props: KanbanColumnProps) {
    */
   const handleDragLeave = () => {
     setIsDraggingOver(false);
-  };
-
-  /**
-   * Initiates the drag action on a task card, storing its ID and current status in the data transfer payload.
-   *
-   * @param {React.DragEvent<HTMLDivElement>} e - The drag event object.
-   * @param {string} taskId - The identifier of the task being dragged.
-   * @param {TaskStatus} currentStatus - The original status category of the task.
-   */
-  const handleDragStart = (
-    e: React.DragEvent<HTMLDivElement>,
-    taskId: string,
-    currentStatus: TaskStatus,
-  ) => {
-    e.dataTransfer.setData("text/plain", taskId);
-    e.dataTransfer.setData("sourceStatus", currentStatus);
   };
 
   /**
@@ -118,7 +103,7 @@ export default function KanbanColumn(props: KanbanColumnProps) {
           <span
             className={`w-2.5 h-2.5 rounded-full shadow-sm ${indicatorColor}`}
           />
-          <h2 className="font-bold text-xs uppercase tracking-wider ">
+          <h2 className="font-bold text-xs uppercase tracking-wider">
             {props.title}
           </h2>
           <span className="text-xs bg-card text-foreground-muted px-2 py-0.5 rounded-full font-semibold border border-border/60">
@@ -138,18 +123,11 @@ export default function KanbanColumn(props: KanbanColumnProps) {
           </div>
         ) : (
           props.tasks.map((task) => (
-            <div
+            <KanbanCard
               key={task.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, task.id, task.status)}
-              className="group relative bg-card/40 border border-border/80 hover:border-primary/60 p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 space-y-3 cursor-grab active:cursor-grabbing hover:-translate-y-0.5"
-            >
-              <KanbanCard
-                key={task.id}
-                task={task}
-                onStatusChange={updateTaskStatus}
-              />
-            </div>
+              task={task}
+              onStatusChange={updateTaskStatus}
+            />
           ))
         )}
       </div>
