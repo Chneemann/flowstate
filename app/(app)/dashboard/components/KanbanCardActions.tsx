@@ -1,0 +1,105 @@
+/**
+ * @file dashboard/components/KanbanCardActions.tsx
+ * @description Client component rendering the mobile status transition dropdown for a kanban card.
+ */
+
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { MoreHorizontal, CornerDownRight } from "lucide-react";
+import { KANBAN_COLUMNS, TaskStatus } from "@/types/tasks";
+
+/**
+ * Renders a mobile-only action menu component allowing users to move a task
+ * between different kanban columns via a dropdown interface.
+ *
+ * @param {Object} props - The component props.
+ * @param {TaskStatus} props.currentStatus - The current status category of the task.
+ * @param {(newStatus: TaskStatus) => void} props.onMove - Callback function triggered when a new status column is selected.
+ * @returns {JSX.Element} The rendered mobile card actions component.
+ */
+export default function KanbanCardActions({
+  currentStatus,
+  onMove,
+}: {
+  currentStatus: TaskStatus;
+  onMove: (newStatus: TaskStatus) => void;
+}) {
+  const [showMobileActions, setShowMobileActions] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowMobileActions(false);
+      }
+    };
+
+    if (showMobileActions) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMobileActions]);
+
+  /**
+   * Handles clicking an action item to move the task to a target status category.
+   *
+   * @param {React.MouseEvent} e - The mouse event object.
+   * @param {TaskStatus} targetStatus - The target status category to move the task to.
+   */
+  const handleActionClick = (e: React.MouseEvent, targetStatus: TaskStatus) => {
+    e.stopPropagation();
+    onMove(targetStatus);
+    setShowMobileActions(false);
+  };
+
+  return (
+    <div className="relative sm:hidden" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowMobileActions(!showMobileActions);
+        }}
+        className="p-1.5 rounded-lg border border-border bg-background/50 text-foreground-muted transition-all cursor-pointer hover:text-foreground hover:border-primary-hover flex items-center justify-center"
+        title="Move Task"
+      >
+        <MoreHorizontal size={14} />
+      </button>
+
+      <div
+        className={`absolute right-0 bottom-8 z-50 w-50 bg-card border border-border rounded-xl shadow-2xl p-1.5 space-y-1 text-xs origin-bottom-right transition-all duration-200 ease-out ${
+          showMobileActions
+            ? "opacity-100 scale-100 pointer-events-auto"
+            : "opacity-0 scale-10 pointer-events-none"
+        }`}
+      >
+        {KANBAN_COLUMNS.map((col) => {
+          if (col.id === currentStatus) return null;
+          return (
+            <button
+              key={col.id}
+              onClick={(e) => handleActionClick(e, col.id)}
+              className="w-full text-left px-3 py-2 rounded-lg hover:bg-border flex items-center justify-between hover:text-primary group/btn transition-colors cursor-pointer"
+            >
+              <span className="flex items-center gap-2 font-medium">
+                <span className={`w-2.5 h-2.5 rounded-full ${col.color}`} />
+                {col.title}
+              </span>
+              <CornerDownRight
+                size={12}
+                className="text-foreground-muted group-hover/btn:text-primary transition-all"
+              />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
