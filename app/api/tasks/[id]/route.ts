@@ -1,6 +1,6 @@
 /**
  * @file app/api/tasks/[id]/route.ts
- * @description API route handlers for updating a task's status or deleting a task, enforcing user authentication, schema validations, and authorization checks.
+ * @description API route handlers for task mutations (status update, soft delete, restore, and permanent deletion), enforcing authentication and authorization.
  */
 
 import { NextResponse } from "next/server";
@@ -10,14 +10,7 @@ import { TaskService } from "@/services/task.service";
 import { RouteContext, TaskStatus } from "@/types/tasks";
 
 /**
- * Handles PATCH requests to update a specific task's status.
- * Verifies user authentication, validates the incoming status against allowed schema values,
- * checks permissions via the task service, and performs the update.
- *
- * @async
- * @param {Request} request - The incoming HTTP request containing the status update payload.
- * @param {RouteContext} context - The route context containing dynamic route parameters.
- * @returns {Promise<NextResponse>} A JSON response indicating success with the updated task or an error message.
+ * Handles PATCH requests to either update a task's status or restore a soft-deleted task.
  */
 export async function PATCH(request: Request, context: RouteContext) {
   try {
@@ -27,10 +20,30 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     const { id: taskId } = await context.params;
-    const body = await request.json();
-    const { status } = body as { status: unknown };
+    const body = await request.json().catch(() => ({}));
+    const { status, restore } = body as { status?: unknown; restore?: boolean };
 
-    // Validate status against enum values using TaskStatus type guard/check
+    // Restore a task from the Trash
+    if (restore === true) {
+      const restoredTask = await TaskService.restoreIfAuthorized(
+        taskId,
+        session.user.id,
+      );
+
+      if (!restoredTask) {
+        return NextResponse.json(
+          { error: "Task not found or access denied" },
+          { status: 403 },
+        );
+      }
+
+      return NextResponse.json(
+        { success: true, task: restoredTask },
+        { status: 200 },
+      );
+    }
+
+    // Update Task Status
     const validStatuses = taskStatusEnum.enumValues;
     if (
       !status ||
@@ -44,8 +57,6 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     const typedStatus = status as TaskStatus;
-
-    // Execute update & verification via Service in a single step
     const updatedTask = await TaskService.updateStatusIfAuthorized(
       taskId,
       session.user.id,
@@ -64,7 +75,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error updating task status:", error);
+    console.error("Error during PATCH task operation:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -73,13 +84,8 @@ export async function PATCH(request: Request, context: RouteContext) {
 }
 
 /**
- * Handles DELETE requests to remove a specific task by its ID.
- * Verifies user authentication and checks authorization permissions before deletion.
- *
- * @async
- * @param {Request} request - The incoming HTTP request.
- * @param {RouteContext} context - The route context containing dynamic route parameters.
- * @returns {Promise<NextResponse>} A JSON response confirming deletion or an error message.
+ * Handles DELETE requests to either move a task to trash (Soft Delete)
+ * or permanently delete it if it is already in the trash.
  */
 export async function DELETE(request: Request, context: RouteContext) {
   try {
@@ -89,13 +95,36 @@ export async function DELETE(request: Request, context: RouteContext) {
     }
 
     const { id: taskId } = await context.params;
+    const url = new URL(request.url);
+    const permanent = url.searchParams.get("permanent") === "true";
 
-    const deletedTask = await TaskService.deleteIfAuthorized(
+    // Delete Permanently (only if already in the Recycle Bin)
+    if (permanent) {
+      const deletedTask = await TaskService.permanentlyDeleteIfAuthorized(
+        taskId,
+        session.user.id,
+      );
+
+      if (!deletedTask) {
+        return NextResponse.json(
+          { error: "Task not found, access denied, or not in trash" },
+          { status: 403 },
+        );
+      }
+
+      return NextResponse.json(
+        { success: true, task: deletedTask },
+        { status: 200 },
+      );
+    }
+
+    // Move to the Recycle Bin (Soft Delete)
+    const softDeletedTask = await TaskService.softDeleteIfAuthorized(
       taskId,
       session.user.id,
     );
 
-    if (!deletedTask) {
+    if (!softDeletedTask) {
       return NextResponse.json(
         { error: "Task not found or access denied" },
         { status: 403 },
@@ -103,11 +132,11 @@ export async function DELETE(request: Request, context: RouteContext) {
     }
 
     return NextResponse.json(
-      { success: true, task: deletedTask },
+      { success: true, task: softDeletedTask },
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error deleting task:", error);
+    console.error("Error during DELETE task operation:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

@@ -10,7 +10,7 @@ import {
   type Task as DbTask,
 } from "@/db/schema";
 import { TaskStatus } from "@/types/tasks";
-import { and, eq, or, exists } from "drizzle-orm";
+import { and, eq, or, exists, isNotNull } from "drizzle-orm";
 
 /**
  * Service class for handling task-related operations and database interactions.
@@ -99,37 +99,67 @@ export class TaskService {
   }
 
   /**
-   * Deletes a task if the user is authorized as either the owner or an assignee.
+   * Soft-deletes a task by setting its deletion timestamp if the user is the creator.
    *
    * @async
-   * @param {string} taskId - The unique identifier of the task to delete.
-   * @param {string} userId - The unique identifier of the user performing the deletion.
-   * @returns {Promise<DbTask | null>} The deleted task object, or null if the deletion failed or user is unauthorized.
+   * @param {string} taskId - The unique identifier of the task to soft-delete.
+   * @param {string} userId - The unique identifier of the user performing the operation.
+   * @returns {Promise<DbTask | null>} The updated task object with a deletion timestamp, or null if unauthorized.
    */
-  static async deleteIfAuthorized(taskId: string, userId: string) {
+  static async softDeleteIfAuthorized(taskId: string, userId: string) {
+    const [updatedTask] = await db
+      .update(tasksTable)
+      .set({
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(and(eq(tasksTable.id, taskId), eq(tasksTable.userId, userId)))
+      .returning();
+
+    return (updatedTask as DbTask | undefined) || null;
+  }
+
+  /**
+   * Permanently deletes a task from the database if it is already soft-deleted and the user is the creator.
+   *
+   * @async
+   * @param {string} taskId - The unique identifier of the task to permanently delete.
+   * @param {string} userId - The unique identifier of the user performing the operation.
+   * @returns {Promise<DbTask | null>} The permanently deleted task object, or null if unauthorized.
+   */
+  static async permanentlyDeleteIfAuthorized(taskId: string, userId: string) {
     const [deletedTask] = await db
       .delete(tasksTable)
       .where(
         and(
           eq(tasksTable.id, taskId),
-          or(
-            eq(tasksTable.userId, userId),
-            exists(
-              db
-                .select({ taskId: taskAssigneesTable.taskId })
-                .from(taskAssigneesTable)
-                .where(
-                  and(
-                    eq(taskAssigneesTable.taskId, taskId),
-                    eq(taskAssigneesTable.userId, userId),
-                  ),
-                ),
-            ),
-          ),
+          isNotNull(tasksTable.deletedAt),
+          eq(tasksTable.userId, userId),
         ),
       )
       .returning();
 
     return (deletedTask as DbTask | undefined) || null;
+  }
+
+  /**
+   * Restores a soft-deleted task by clearing its deletion timestamp if the user is the creator.
+   *
+   * @async
+   * @param {string} taskId - The unique identifier of the task to restore.
+   * @param {string} userId - The unique identifier of the user performing the operation.
+   * @returns {Promise<DbTask | null>} The restored task object, or null if unauthorized.
+   */
+  static async restoreIfAuthorized(taskId: string, userId: string) {
+    const [restoredTask] = await db
+      .update(tasksTable)
+      .set({
+        deletedAt: null,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(tasksTable.id, taskId), eq(tasksTable.userId, userId)))
+      .returning();
+
+    return (restoredTask as DbTask | undefined) || null;
   }
 }
