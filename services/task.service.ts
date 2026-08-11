@@ -97,4 +97,39 @@ export class TaskService {
 
     return (updatedTask as DbTask | undefined) || null;
   }
+
+  /**
+   * Deletes a task if the user is authorized as either the owner or an assignee.
+   *
+   * @async
+   * @param {string} taskId - The unique identifier of the task to delete.
+   * @param {string} userId - The unique identifier of the user performing the deletion.
+   * @returns {Promise<DbTask | null>} The deleted task object, or null if the deletion failed or user is unauthorized.
+   */
+  static async deleteIfAuthorized(taskId: string, userId: string) {
+    const [deletedTask] = await db
+      .delete(tasksTable)
+      .where(
+        and(
+          eq(tasksTable.id, taskId),
+          or(
+            eq(tasksTable.userId, userId),
+            exists(
+              db
+                .select({ taskId: taskAssigneesTable.taskId })
+                .from(taskAssigneesTable)
+                .where(
+                  and(
+                    eq(taskAssigneesTable.taskId, taskId),
+                    eq(taskAssigneesTable.userId, userId),
+                  ),
+                ),
+            ),
+          ),
+        ),
+      )
+      .returning();
+
+    return (deletedTask as DbTask | undefined) || null;
+  }
 }

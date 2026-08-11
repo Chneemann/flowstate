@@ -1,6 +1,6 @@
 /**
  * @file app/api/tasks/[id]/route.ts
- * @description API route handler for updating a task's status patch endpoint, ensuring user authorization and valid status transitions.
+ * @description API route handlers for updating a task's status or deleting a task, enforcing user authentication, schema validations, and authorization checks.
  */
 
 import { NextResponse } from "next/server";
@@ -65,6 +65,49 @@ export async function PATCH(request: Request, context: RouteContext) {
     );
   } catch (error) {
     console.error("Error updating task status:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * Handles DELETE requests to remove a specific task by its ID.
+ * Verifies user authentication and checks authorization permissions before deletion.
+ *
+ * @async
+ * @param {Request} request - The incoming HTTP request.
+ * @param {RouteContext} context - The route context containing dynamic route parameters.
+ * @returns {Promise<NextResponse>} A JSON response confirming deletion or an error message.
+ */
+export async function DELETE(request: Request, context: RouteContext) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id: taskId } = await context.params;
+
+    const deletedTask = await TaskService.deleteIfAuthorized(
+      taskId,
+      session.user.id,
+    );
+
+    if (!deletedTask) {
+      return NextResponse.json(
+        { error: "Task not found or access denied" },
+        { status: 403 },
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, task: deletedTask },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error deleting task:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
