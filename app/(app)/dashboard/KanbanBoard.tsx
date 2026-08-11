@@ -13,13 +13,20 @@ import KanbanBoardHeader from "./components/KanbanBoardHeader";
 
 /**
  * Renders the responsive grid container of kanban columns, coordinating state tracking
- * for active task updates/deletions and triggering mutation API requests.
+ * for active task updates/deletions, trash counts, and triggering mutation API requests.
  *
  * @param {Object} props - The component props.
  * @param {Task[]} props.tasks - The array of task items displayed across the board.
+ * @param {number} props.trashCount - The count of items currently in the trash bin.
  * @returns {JSX.Element} The rendered kanban board component.
  */
-export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
+export default function KanbanBoard({
+  tasks,
+  trashCount,
+}: {
+  tasks: Task[];
+  trashCount: number;
+}) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [updatingTaskIds, setUpdatingTaskIds] = useState<Set<string>>(
@@ -93,7 +100,7 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
   return (
     <div className="space-y-8">
       {/* Workspace Header */}
-      <KanbanBoardHeader onTaskDelete={deleteTask} />
+      <KanbanBoardHeader onTaskDelete={deleteTask} trashCount={trashCount} />
 
       {/* Kanban Columns Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">

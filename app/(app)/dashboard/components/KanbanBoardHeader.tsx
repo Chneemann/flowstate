@@ -1,25 +1,29 @@
 /**
  * @file dashboard/components/KanbanBoardHeader.tsx
- * @description Component rendering the top title header with an integrated delete drop zone that appears during drag-and-drop interactions.
+ * @description Component rendering the top title header with an integrated delete drop zone that appears during drag-and-drop interactions, plus a link to the trash bin view.
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
 import { Plus, Sparkles, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 /**
  * Renders the dashboard header featuring a workspace title, subtitle, new task action button,
- * and a dynamic drop zone for deleting tasks during drag operations.
+ * a dynamic delete drop zone during drag operations, and a trash navigation link with a counter badge.
  *
  * @param {Object} props - The component props.
  * @param {(taskId: string) => void} props.onTaskDelete - Callback function invoked when a task is dropped into the delete zone.
+ * @param {number} props.trashCount - The current count of items in the trash bin.
  * @returns {JSX.Element} The rendered kanban board header component.
  */
 export default function KanbanBoardHeader({
   onTaskDelete,
+  trashCount,
 }: {
   onTaskDelete: (taskId: string) => void;
+  trashCount: number;
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isOver, setIsOver] = useState(false);
@@ -86,6 +90,24 @@ export default function KanbanBoardHeader({
             New Task
           </button>
         )}
+        <Link
+          href="/trash"
+          className="relative group p-2 rounded-xl border border-border hover:border-primary transition-all duration-200"
+          title="View Trash"
+        >
+          {/* Icon */}
+          <Trash2
+            size={16}
+            className="text-foreground-muted group-hover:text-primary transition-colors"
+          />
+
+          {/* Badge */}
+          {trashCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-destructive text-[9px] font-bold text-white shadow-sm ring-1 ring-background">
+              {trashCount}
+            </span>
+          )}
+        </Link>
       </div>
     </div>
   );
