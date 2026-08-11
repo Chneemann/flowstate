@@ -1,29 +1,32 @@
 /**
  * @file dashboard/components/KanbanCardActions.tsx
- * @description Client component rendering the mobile status transition dropdown for a kanban card.
+ * @description Client component rendering the mobile status transition and deletion dropdown for a kanban card.
  */
 
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MoreHorizontal, CornerDownRight } from "lucide-react";
+import { MoreHorizontal, CornerDownRight, Trash2 } from "lucide-react";
 import { KANBAN_COLUMNS, TaskStatus } from "@/types/tasks";
 
 /**
  * Renders a mobile-only action menu component allowing users to move a task
- * between different kanban columns via a dropdown interface.
+ * between different kanban columns or delete it entirely via a dropdown interface.
  *
  * @param {Object} props - The component props.
  * @param {TaskStatus} props.currentStatus - The current status category of the task.
  * @param {(newStatus: TaskStatus) => void} props.onMove - Callback function triggered when a new status column is selected.
+ * @param {() => void} props.onDelete - Callback function triggered when the delete action is selected.
  * @returns {JSX.Element} The rendered mobile card actions component.
  */
 export default function KanbanCardActions({
   currentStatus,
   onMove,
+  onDelete,
 }: {
   currentStatus: TaskStatus;
   onMove: (newStatus: TaskStatus) => void;
+  onDelete: () => void;
 }) {
   const [showMobileActions, setShowMobileActions] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -56,6 +59,17 @@ export default function KanbanCardActions({
   const handleActionClick = (e: React.MouseEvent, targetStatus: TaskStatus) => {
     e.stopPropagation();
     onMove(targetStatus);
+    setShowMobileActions(false);
+  };
+
+  /**
+   * Handles clicking the delete action item to trigger task deletion.
+   *
+   * @param {React.MouseEvent} e - The mouse event object.
+   */
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete();
     setShowMobileActions(false);
   };
 
@@ -99,6 +113,18 @@ export default function KanbanCardActions({
             </button>
           );
         })}
+        <div className="h-px bg-border my-1" />
+
+        {/* Delete Button */}
+        <button
+          onClick={handleDeleteClick}
+          className="w-full text-left px-3 py-2 rounded-lg hover:bg-destructive hover:text-foreground flex items-center justify-between text-destructive group/del transition-colors cursor-pointer font-medium"
+        >
+          <span className="flex items-center gap-2">
+            <Trash2 size={12} />
+            Delete Task
+          </span>
+        </button>
       </div>
     </div>
   );

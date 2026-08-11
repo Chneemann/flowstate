@@ -97,6 +97,7 @@ export default function KanbanColumn(props: KanbanColumnProps) {
               task={task}
               isUpdating={props.updatingTaskIds?.has(task.id)}
               onStatusChange={props.onTaskMove}
+              onDelete={props.onTaskDelete}
             />
           ))
         )}

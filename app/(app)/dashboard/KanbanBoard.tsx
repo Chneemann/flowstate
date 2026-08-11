@@ -1,6 +1,6 @@
 /**
  * @file dashboard/KanbanBoard.tsx
- * @description Client component wrapping the kanban columns grid, tracking individual task update states, and handling asynchronous status mutations via API.
+ * @description Client component wrapping the kanban columns grid, tracking individual task update/deletion states, and handling asynchronous mutations via API.
  */
 
 "use client";
@@ -13,7 +13,7 @@ import KanbanBoardHeader from "./components/KanbanBoardHeader";
 
 /**
  * Renders the responsive grid container of kanban columns, coordinating state tracking
- * for active task updates and triggering status mutation API requests.
+ * for active task updates/deletions and triggering mutation API requests.
  *
  * @param {Object} props - The component props.
  * @param {Task[]} props.tasks - The array of task items displayed across the board.
@@ -61,10 +61,39 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
     });
   };
 
+  /**
+   * Deletes a specific task by sending a DELETE request to the API,
+   * managing loading states, and refreshing the router upon success.
+   *
+   * @param {string} taskId - The unique identifier of the task to delete.
+   */
+  const deleteTask = (taskId: string) => {
+    setUpdatingTaskIds((prev) => new Set(prev).add(taskId));
+
+    startTransition(async () => {
+      try {
+        const response = await fetch(`/api/tasks/${taskId}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Failed to delete task");
+        await router.refresh();
+      } catch (error) {
+        console.error("Error during task deletion:", error);
+      } finally {
+        setUpdatingTaskIds((prev) => {
+          const next = new Set(prev);
+          next.delete(taskId);
+          return next;
+        });
+      }
+    });
+  };
+
   return (
     <div className="space-y-8">
       {/* Workspace Header */}
-      <KanbanBoardHeader />
+      <KanbanBoardHeader onTaskDelete={deleteTask} />
 
       {/* Kanban Columns Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
@@ -80,6 +109,7 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
               color={col.color}
               updatingTaskIds={updatingTaskIds}
               onTaskMove={updateTaskStatus}
+              onTaskDelete={deleteTask}
             />
           );
         })}

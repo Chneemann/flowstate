@@ -23,6 +23,7 @@ export default function KanbanCard({
   task,
   isUpdating = false,
   onStatusChange,
+  onDelete,
 }: KanbanCardProps) {
   /**
    * Initiates the drag action on a task card if not currently updating, storing its ID and status payload.
@@ -88,7 +89,11 @@ export default function KanbanCard({
             creator={task.creator}
             assignees={task.assignees}
           />
-          <KanbanCardActions currentStatus={task.status} onMove={handleMove} />
+          <KanbanCardActions
+            currentStatus={task.status}
+            onMove={handleMove}
+            onDelete={() => onDelete?.(task.id)}
+          />
         </div>
       </div>
     </div>
