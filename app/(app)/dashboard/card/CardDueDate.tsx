@@ -1,5 +1,5 @@
 /**
- * @file dashboard/components/KanbanCardDueDate.tsx
+ * @file dashboard/card/CardDueDate.tsx
  * @description Client component rendering the due date badge with overdue status indicators and hover time display.
  */
 
@@ -7,14 +7,14 @@ import { AlertCircle, CalendarDays } from "lucide-react";
 import { Task } from "@/types/tasks";
 
 /**
- * Renders a due date badge for a kanban card, showing an overdue alert animation
+ * Renders a due date badge for a card, showing an overdue alert animation
  * if the deadline has passed and the task is not completed, alongside a hoverable time display.
  *
  * @param {Object} props - The component props.
  * @param {Task} props.task - The task object containing the due date and status information.
  * @returns {JSX.Element | null} The rendered due date badge component or null if no due date is set.
  */
-export default function KanbanCardDueDate({ task }: { task: Task }) {
+export default function CardDueDate({ task }: { task: Task }) {
   if (!task.dueDate) return null;
 
   const isOverdue =

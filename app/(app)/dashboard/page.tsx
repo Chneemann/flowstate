@@ -1,6 +1,6 @@
 /**
  * @file dashboard/page.tsx
- * @description Server component rendering the main dashboard page, handling authentication, fetching active user-related tasks and assignees, computing trash counts, and passing data to the kanban board container.
+ * @description Server component rendering the main dashboard page, handling authentication, fetching active user-related tasks and assignees, computing trash counts, and passing data to the board container.
  */
 
 import { db } from "@/db";
@@ -8,13 +8,13 @@ import { tasksTable, taskAssigneesTable, usersTable } from "@/db/schema";
 import { and, count, eq, inArray, isNotNull, isNull, or } from "drizzle-orm";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import KanbanBoard from "./KanbanBoard";
+import Board from "./Board";
 import { Task } from "@/types/tasks";
 
 /**
  * Renders the dashboard page component with user session validation,
  * database queries for active tasks, team assignees, and soft-deleted trash counts,
- * before passing the structured dataset to the Kanban board container.
+ * before passing the structured dataset to the board container.
  *
  * @async
  * @returns {Promise<JSX.Element>} The rendered dashboard page component.
@@ -95,7 +95,7 @@ export default async function Dashboard() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
-      <KanbanBoard tasks={tasks} trashCount={trashCount} />
+      <Board tasks={tasks} trashCount={trashCount} />
     </div>
   );
 }

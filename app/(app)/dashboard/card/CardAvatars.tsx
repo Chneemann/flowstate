@@ -1,6 +1,6 @@
 /**
- * @file dashboard/components/KanbanCardAvatars.tsx
- * @description Client component rendering team avatars and creator badge for a kanban card.
+ * @file dashboard/card/CardAvatars.tsx
+ * @description Client component rendering team avatars and creator badge for a card.
  */
 
 "use client";
@@ -17,7 +17,7 @@ import { Task } from "@/types/tasks";
  * @param {Task["assignees"]} [props.assignees=[]] - An array of emails or identifiers for users assigned to the task.
  * @returns {JSX.Element | null} The rendered avatars container, or null if neither creator nor assignees exist.
  */
-export default function KanbanCardAvatars({
+export default function CardAvatars({
   creator,
   assignees = [],
 }: {

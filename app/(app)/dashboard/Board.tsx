@@ -1,26 +1,26 @@
 /**
- * @file dashboard/KanbanBoard.tsx
- * @description Client component wrapping the kanban columns grid, tracking individual task update/deletion states, and handling asynchronous mutations via API.
+ * @file dashboard/Board.tsx
+ * @description Client component wrapping the columns grid, tracking individual task update/deletion states, and handling asynchronous mutations via API.
  */
 
 "use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import KanbanColumn from "./KanbanColumn";
-import { KANBAN_COLUMNS, Task, TaskStatus } from "@/types/tasks";
-import KanbanBoardHeader from "./components/KanbanBoardHeader";
+import Column from "./column/Column";
+import { COLUMNS, Task, TaskStatus } from "@/types/tasks";
+import Header from "./header/Header";
 
 /**
- * Renders the responsive grid container of kanban columns, coordinating state tracking
+ * Renders the responsive grid container of columns, coordinating state tracking
  * for active task updates/deletions, trash counts, and triggering mutation API requests.
  *
  * @param {Object} props - The component props.
  * @param {Task[]} props.tasks - The array of task items displayed across the board.
  * @param {number} props.trashCount - The count of items currently in the trash bin.
- * @returns {JSX.Element} The rendered kanban board component.
+ * @returns {JSX.Element} The rendered board component.
  */
-export default function KanbanBoard({
+export default function Board({
   tasks,
   trashCount,
 }: {
@@ -100,14 +100,14 @@ export default function KanbanBoard({
   return (
     <div className="space-y-8">
       {/* Workspace Header */}
-      <KanbanBoardHeader onTaskDelete={deleteTask} trashCount={trashCount} />
+      <Header onTaskDelete={deleteTask} trashCount={trashCount} />
 
-      {/* Kanban Columns Grid */}
+      {/* Columns Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
-        {KANBAN_COLUMNS.map((col) => {
+        {COLUMNS.map((col) => {
           const columnTasks = tasks.filter((t) => t.status === col.id);
           return (
-            <KanbanColumn
+            <Column
               key={col.id}
               id={col.id}
               title={col.title}

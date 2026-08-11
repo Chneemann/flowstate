@@ -1,22 +1,18 @@
 /**
- * @file dashboard/components/KanbanCardPriority.tsx
- * @description Client component rendering the dynamic priority badge for a kanban card based on configuration.
+ * @file dashboard/card/CardPriority.tsx
+ * @description Client component rendering the dynamic priority badge for a card based on configuration.
  */
 
 import { TaskPriority, PRIORITY_CONFIG } from "@/types/tasks";
 
 /**
- * Renders a styled priority badge for a kanban card.
+ * Renders a styled priority badge for a card.
  *
  * @param {Object} props - The component props.
  * @param {TaskPriority} props.priority - The priority level of the task.
  * @returns {JSX.Element | null} The rendered priority badge component, or null if priority is invalid.
  */
-export default function KanbanCardPriority({
-  priority,
-}: {
-  priority: TaskPriority;
-}) {
+export default function CardPriority({ priority }: { priority: TaskPriority }) {
   if (!priority || !PRIORITY_CONFIG[priority]) return null;
 
   const { label, className } = PRIORITY_CONFIG[priority];

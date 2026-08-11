@@ -1,30 +1,30 @@
 /**
- * @file dashboard/KanbanCard.tsx
- * @description Client component rendering a single kanban card container with individual loading states and modular sub-components.
+ * @file dashboard/card/Card.tsx
+ * @description Client component rendering a single card container with individual loading states and modular sub-components.
  */
 
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { KanbanCardProps, TaskStatus } from "@/types/tasks";
-import KanbanCardActions from "./components/KanbanCardActions";
-import KanbanCardAvatars from "./components/KanbanCardAvatars";
-import KanbanCardDueDate from "./components/KanbanCardDueDate";
-import KanbanCardPriority from "./components/KanbanCardPriority";
+import { CardProps, TaskStatus } from "@/types/tasks";
+import CardActions from "./CardActions";
+import CardAvatars from "./CardAvatars";
+import CardDueDate from "./CardDueDate";
+import CardPriority from "./CardPriority";
 
 /**
- * Renders an interactive kanban card container handling drag-and-drop actions, loading states,
+ * Renders an interactive card container handling drag-and-drop actions, loading states,
  * and assembling modular sub-components for priorities, due dates, avatars, and actions.
  *
- * @param {KanbanCardProps} props - The component props containing the task object, updating status flag, and status change handler.
- * @returns {JSX.Element} The rendered kanban card component.
+ * @param {CardProps} props - The component props containing the task object, updating status flag, and status change handler.
+ * @returns {JSX.Element} The rendered card component.
  */
-export default function KanbanCard({
+export default function Card({
   task,
   isUpdating = false,
   onStatusChange,
   onDelete,
-}: KanbanCardProps) {
+}: CardProps) {
   /**
    * Initiates the drag action on a task card if not currently updating, storing its ID and status payload.
    *
@@ -72,7 +72,7 @@ export default function KanbanCard({
         <h3 className="font-semibold leading-snug group-hover/card:text-primary transition-colors line-clamp-2">
           {task.title}
         </h3>
-        <KanbanCardPriority priority={task.priority} />
+        <CardPriority priority={task.priority} />
       </div>
 
       {/* Card Description */}
@@ -82,14 +82,11 @@ export default function KanbanCard({
 
       {/* --- Card Footer --- */}
       <div className="flex items-center justify-between pt-3 mt-auto text-xs border-t border-border">
-        <KanbanCardDueDate task={task} />
+        <CardDueDate task={task} />
 
         <div className="flex items-center gap-2">
-          <KanbanCardAvatars
-            creator={task.creator}
-            assignees={task.assignees}
-          />
-          <KanbanCardActions
+          <CardAvatars creator={task.creator} assignees={task.assignees} />
+          <CardActions
             currentStatus={task.status}
             onMove={handleMove}
             onDelete={() => onDelete?.(task.id)}

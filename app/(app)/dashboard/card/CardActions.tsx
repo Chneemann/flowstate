@@ -1,17 +1,17 @@
 /**
- * @file dashboard/components/KanbanCardActions.tsx
- * @description Client component rendering the mobile status transition and deletion dropdown for a kanban card.
+ * @file dashboard/card/CardActions.tsx
+ * @description Client component rendering the mobile status transition and deletion dropdown for a card.
  */
 
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import { MoreHorizontal, CornerDownRight, Trash2 } from "lucide-react";
-import { KANBAN_COLUMNS, TaskStatus } from "@/types/tasks";
+import { COLUMNS, TaskStatus } from "@/types/tasks";
 
 /**
  * Renders a mobile-only action menu component allowing users to move a task
- * between different kanban columns or delete it entirely via a dropdown interface.
+ * between different columns or delete it entirely via a dropdown interface.
  *
  * @param {Object} props - The component props.
  * @param {TaskStatus} props.currentStatus - The current status category of the task.
@@ -19,7 +19,7 @@ import { KANBAN_COLUMNS, TaskStatus } from "@/types/tasks";
  * @param {() => void} props.onDelete - Callback function triggered when the delete action is selected.
  * @returns {JSX.Element} The rendered mobile card actions component.
  */
-export default function KanbanCardActions({
+export default function CardActions({
   currentStatus,
   onMove,
   onDelete,
@@ -94,7 +94,7 @@ export default function KanbanCardActions({
             : "opacity-0 scale-10 pointer-events-none"
         }`}
       >
-        {KANBAN_COLUMNS.map((col) => {
+        {COLUMNS.map((col) => {
           if (col.id === currentStatus) return null;
           return (
             <button
