@@ -5,7 +5,7 @@
 
 "use client";
 
-import { Task, PRIORITY_CONFIG } from "@/types/tasks";
+import { Task, PRIORITY_CONFIG } from "@/types/task";
 import { Calendar } from "lucide-react";
 import TaskActionButton from "./components/TaskActionButton";
 

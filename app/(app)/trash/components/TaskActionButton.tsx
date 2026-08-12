@@ -11,21 +11,28 @@ import { RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { mutate } from "swr";
 
 /**
+ * Properties for the TaskActionButton component.
+ *
+ * @interface TaskActionButtonProps
+ * @property {string} taskId - The unique identifier of the target task.
+ * @property {"restore" | "delete"} action - The type of action to execute (restore or delete).
+ */
+interface TaskActionButtonProps {
+  taskId: string;
+  action: "restore" | "delete";
+}
+
+/**
  * Renders an action button for either restoring or permanently deleting a task,
  * managing the request lifecycle and visual transition states.
  *
- * @param {Object} props - The component props.
- * @param {string} props.taskId - The unique identifier of the target task.
- * @param {"restore" | "delete"} props.action - The type of action to execute (restore or delete).
+ * @param {TaskActionButtonProps} props - The component props.
  * @returns {JSX.Element} The rendered task action button component.
  */
 export default function TaskActionButton({
   taskId,
   action,
-}: {
-  taskId: string;
-  action: "restore" | "delete";
-}) {
+}: TaskActionButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 

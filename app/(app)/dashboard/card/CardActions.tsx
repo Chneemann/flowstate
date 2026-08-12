@@ -7,16 +7,29 @@
 
 import { useState, useEffect, useRef } from "react";
 import { MoreHorizontal, CornerDownRight, Trash2 } from "lucide-react";
-import { COLUMNS, TaskStatus } from "@/types/tasks";
+import { COLUMNS, TaskStatus } from "@/types/task";
+
+/**
+ * Properties for the CardActions component.
+ *
+ * @interface CardActionsProps
+ * @property {TaskStatus} currentStatus - The current status category of the task.
+ * @property {boolean} isCreator - Flag indicating whether the current user is the creator of the task.
+ * @property {(newStatus: TaskStatus) => void} onMove - Callback function triggered when a new status column is selected.
+ * @property {() => void} onDelete - Callback function triggered when the delete action is selected.
+ */
+interface CardActionsProps {
+  currentStatus: TaskStatus;
+  isCreator: boolean;
+  onMove: (newStatus: TaskStatus) => void;
+  onDelete: () => void;
+}
 
 /**
  * Renders a mobile-only action menu component allowing users to move a task
  * between different columns or delete it entirely via a dropdown interface.
  *
- * @param {Object} props - The component props.
- * @param {TaskStatus} props.currentStatus - The current status category of the task.
- * @param {(newStatus: TaskStatus) => void} props.onMove - Callback function triggered when a new status column is selected.
- * @param {() => void} props.onDelete - Callback function triggered when the delete action is selected.
+ * @param {CardActionsProps} props - The component props.
  * @returns {JSX.Element} The rendered mobile card actions component.
  */
 export default function CardActions({
@@ -24,12 +37,7 @@ export default function CardActions({
   isCreator,
   onMove,
   onDelete,
-}: {
-  currentStatus: TaskStatus;
-  isCreator: boolean;
-  onMove: (newStatus: TaskStatus) => void;
-  onDelete: () => void;
-}) {
+}: CardActionsProps) {
   const [showMobileActions, setShowMobileActions] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

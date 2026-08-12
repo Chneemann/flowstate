@@ -34,15 +34,30 @@ export default function RegisterPage() {
     setLoading(true);
 
     const formData = new FormData(event.currentTarget);
+    const firstName = formData.get("firstName");
+    const lastName = formData.get("lastName");
     const email = formData.get("email");
     const password = formData.get("password");
+    const confirmPassword = formData.get("confirmPassword");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
 
     try {
       // Send registration request to the API
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+          confirmPassword,
+        }),
       });
 
       // Ensure the response is valid JSON before parsing
@@ -95,17 +110,40 @@ export default function RegisterPage() {
 
         {/* Credentials Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              name="firstName"
+              type="text"
+              placeholder="First Name*"
+              required
+              className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
+            />
+            <input
+              name="lastName"
+              type="text"
+              placeholder="Last Name*"
+              required
+              className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
+            />
+          </div>
           <input
             name="email"
             type="email"
-            placeholder="Email"
+            placeholder="Email*"
             required
             className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
           />
           <input
             name="password"
             type="password"
-            placeholder="Password"
+            placeholder="Password*"
+            required
+            className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
+          />
+          <input
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm Password*"
             required
             className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
           />

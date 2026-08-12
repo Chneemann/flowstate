@@ -7,10 +7,16 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { taskStatusEnum } from "@/db/schema";
 import { TaskService } from "@/services/task.service";
-import { RouteContext, TaskStatus } from "@/types/tasks";
+import { RouteContext, TaskStatus } from "@/types/task";
 
 /**
- * Handles PATCH requests to either update a task's status or restore a soft-deleted task.
+ * Handles PATCH requests to either update a task's status or restore a soft-deleted task,
+ * validating user sessions, request payloads, and authorization permissions.
+ *
+ * @async
+ * @param {Request} request - The incoming HTTP request object.
+ * @param {RouteContext} context - The route context containing dynamic route parameters.
+ * @returns {Promise<NextResponse>} A JSON response containing the updated/restored task or an error message.
  */
 export async function PATCH(request: Request, context: RouteContext) {
   try {
@@ -85,7 +91,12 @@ export async function PATCH(request: Request, context: RouteContext) {
 
 /**
  * Handles DELETE requests to either move a task to trash (Soft Delete)
- * or permanently delete it if it is already in the trash.
+ * or permanently delete it if it is already in the trash, verifying session authorization.
+ *
+ * @async
+ * @param {Request} request - The incoming HTTP request object containing query parameters.
+ * @param {RouteContext} context - The route context containing dynamic route parameters.
+ * @returns {Promise<NextResponse>} A JSON response confirming deletion or an error message.
  */
 export async function DELETE(request: Request, context: RouteContext) {
   try {

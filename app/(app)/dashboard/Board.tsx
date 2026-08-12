@@ -8,7 +8,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Column from "./column/Column";
-import { COLUMNS, Task, TaskStatus } from "@/types/tasks";
+import { COLUMNS, Task, TaskStatus } from "@/types/task";
 import Header from "./header/Header";
 import { mutate } from "swr";
 

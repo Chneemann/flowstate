@@ -4,7 +4,7 @@
  */
 
 import { AlertCircle, CalendarDays } from "lucide-react";
-import { Task } from "@/types/tasks";
+import { Task } from "@/types/task";
 
 /**
  * Renders a due date badge for a card, showing an overdue alert animation

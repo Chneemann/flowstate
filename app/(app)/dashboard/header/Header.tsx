@@ -12,23 +12,18 @@ import NewTaskButton from "./NewTaskButton";
 import { useState } from "react";
 
 /**
- * Properties for the Header component.
- *
- * @interface HeaderProps
- * @property {(taskId: string) => void} onTaskDelete - Callback function triggered when a task is dropped into the delete zone.
- */
-interface HeaderProps {
-  onTaskDelete: (taskId: string) => void;
-}
-
-/**
  * Renders the dashboard header section featuring title text, a task deletion drop zone,
  * and conditionally displays the new task action button and trash link based on the drag state.
  *
- * @param {HeaderProps} props - The component props.
+ * @param {Object} props - The component props.
+ * @param {(taskId: string) => void} props.onTaskDelete - Callback function triggered when a task is dropped into the delete zone.
  * @returns {JSX.Element} The rendered dashboard header component.
  */
-export default function Header({ onTaskDelete }: HeaderProps) {
+export default function Header({
+  onTaskDelete,
+}: {
+  onTaskDelete: (taskId: string) => void;
+}) {
   const [isDraggingActive, setIsDraggingActive] = useState(false);
 
   return (

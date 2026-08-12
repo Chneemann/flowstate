@@ -8,24 +8,31 @@
 import { Plus } from "lucide-react";
 
 /**
+ * Properties for the ColumnHeader component.
+ *
+ * @interface ColumnHeaderProps
+ * @property {string} title - The title of the column.
+ * @property {string} [color] - Tailwind CSS color class for the status indicator dot.
+ * @property {number} count - The number of tasks currently inside this column.
+ */
+interface ColumnHeaderProps {
+  title: string;
+  color?: string;
+  count: number;
+}
+
+/**
  * Renders the header section of a column, displaying a color-coded status indicator,
  * the column name, the total task count badge, and a button to add new tasks.
  *
- * @param {Object} props - The component props.
- * @param {string} props.title - The title of the column.
- * @param {string} [props.color] - Tailwind CSS color class for the status indicator dot.
- * @param {number} props.count - The number of tasks currently inside this column.
+ * @param {ColumnHeaderProps} props - The component props.
  * @returns {JSX.Element} The rendered column header component.
  */
 export default function ColumnHeader({
   title,
   color = "bg-primary",
   count,
-}: {
-  title: string;
-  color?: string;
-  count: number;
-}) {
+}: ColumnHeaderProps) {
   return (
     <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/40">
       <div className="flex items-center gap-2.5">

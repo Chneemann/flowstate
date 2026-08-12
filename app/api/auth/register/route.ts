@@ -1,6 +1,6 @@
 /**
  * @file route.ts
- * @description API route handler for user registration, managing email normalization, credential validation, secure password hashing, and auto sign-in.
+ * @description API route handler for user registration, managing name validation, email normalization, password matching, hashing, and auto sign-in.
  */
 
 import { NextResponse } from "next/server";
@@ -9,19 +9,19 @@ import { usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
+import { AVAILABLE_COLORS } from "@/types/user";
 
 /**
- * Handles POST requests to register a new user.
- * Parses and validates the request body, normalizes the email address, enforces security rules,
- * checks for existing records, stores the hashed password in the database, and attempts an automatic sign-in.
+ * Handles POST requests for new user registration.
+ * Validates input fields, checks password confirmation, normalizes email, checks for existing users,
+ * assigns a random profile color, hashes the password, saves the user to the database, and performs an automatic sign-in.
  *
  * @async
- * @param {Request} request - The incoming HTTP request containing the registration data.
- * @returns {Promise<NextResponse>} A JSON response with status details indicating success or failure.
+ * @param {Request} request - The incoming HTTP request containing the registration payload in JSON format.
+ * @returns {Promise<NextResponse>} A JSON response indicating registration success or an error message with the appropriate HTTP status code.
  */
 export async function POST(request: Request) {
   try {
-    // Parse incoming JSON body safely
     const body = await request.json().catch(() => null);
 
     if (!body) {
@@ -31,22 +31,42 @@ export async function POST(request: Request) {
       );
     }
 
-    const { email: rawEmail, password } = body;
+    const {
+      firstName,
+      lastName,
+      email: rawEmail,
+      password,
+      confirmPassword,
+    } = body;
 
-    // Ensure types and presence of required fields
+    // Validation of all required fields
     if (
+      !firstName ||
+      typeof firstName !== "string" ||
+      !lastName ||
+      typeof lastName !== "string" ||
       !rawEmail ||
       typeof rawEmail !== "string" ||
       !password ||
-      typeof password !== "string"
+      typeof password !== "string" ||
+      !confirmPassword ||
+      typeof confirmPassword !== "string"
     ) {
       return NextResponse.json(
-        { message: "Email and password are required" },
+        { message: "All fields are required" },
         { status: 400 },
       );
     }
 
-    // Normalize email (lowercase and trim)
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      return NextResponse.json(
+        { message: "Passwords do not match" },
+        { status: 400 },
+      );
+    }
+
+    // Normalize email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const email = rawEmail.toLowerCase().trim();
 
@@ -57,7 +77,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Enforce minimum password length security constraint
+    // Password length check
     if (password.length < 8) {
       return NextResponse.json(
         { message: "Password must be at least 8 characters long" },
@@ -65,7 +85,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user with this email already exists
+    // Check existing user
     const existing = await db.query.usersTable.findFirst({
       where: eq(usersTable.email, email),
     });
@@ -77,11 +97,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash password securely with bcrypt before storing
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await db.insert(usersTable).values({ email, password: hashedPassword });
+    // Select a random default color from the palette
+    const randomColor =
+      AVAILABLE_COLORS[Math.floor(Math.random() * AVAILABLE_COLORS.length)];
 
-    // Automatically authenticate the user after successful registration
+    // Hash password & save user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db.insert(usersTable).values({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email,
+      password: hashedPassword,
+      color: randomColor,
+    });
+
+    // Auto sign-in
     const signInResult = await signIn("credentials", {
       email,
       password,

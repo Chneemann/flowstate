@@ -4,13 +4,8 @@
  */
 
 import { db } from "@/db";
-import {
-  tasksTable,
-  taskAssigneesTable,
-  type Task as DbTask,
-  usersTable,
-} from "@/db/schema";
-import { TaskStatus } from "@/types/tasks";
+import { tasksTable, taskAssigneesTable, usersTable } from "@/db/schema";
+import { DbTask, TaskStatus } from "@/types/task";
 import { and, eq, or, exists, isNotNull, isNull, inArray } from "drizzle-orm";
 
 /**
@@ -112,7 +107,7 @@ export class TaskService {
     return await db
       .select({
         task: tasksTable,
-        creatorEmail: usersTable.email,
+        user: usersTable,
       })
       .from(tasksTable)
       .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))
@@ -137,7 +132,7 @@ export class TaskService {
     return await db
       .select({
         taskId: taskAssigneesTable.taskId,
-        email: usersTable.email,
+        user: usersTable,
       })
       .from(taskAssigneesTable)
       .innerJoin(usersTable, eq(taskAssigneesTable.userId, usersTable.id))
@@ -155,7 +150,7 @@ export class TaskService {
     return await db
       .select({
         task: tasksTable,
-        creatorEmail: usersTable.email,
+        user: usersTable,
       })
       .from(tasksTable)
       .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))

@@ -3,7 +3,7 @@
  * @description Client component rendering the dynamic priority badge for a card based on configuration.
  */
 
-import { TaskPriority, PRIORITY_CONFIG } from "@/types/tasks";
+import { TaskPriority, PRIORITY_CONFIG } from "@/types/task";
 
 /**
  * Renders a styled priority badge for a card.

@@ -3,12 +3,12 @@
  * @description Server component rendering the trash management view using the TaskService.
  */
 
-import { Task } from "@/db/schema";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import TrashList from "../trash/TrashList";
 import TrashHeader from "../trash/components/TrashHeader";
 import { TaskService } from "@/services/task.service";
+import { Task } from "@/types/task";
 
 /**
  * Renders the trash page verifying user authentication, querying soft-deleted tasks,
@@ -26,8 +26,10 @@ export default async function TrashPage() {
   const rawTrashedTasks =
     await TaskService.findTrashTasksForUser(currentUserId);
 
-  const tasks: Task[] = rawTrashedTasks.map(({ task }) => ({
+  const tasks: Task[] = rawTrashedTasks.map(({ task, user }) => ({
     ...task,
+    creator: user,
+    assignees: [],
     isCreator: task.userId === currentUserId,
   }));
 

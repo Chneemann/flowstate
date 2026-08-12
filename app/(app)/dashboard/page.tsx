@@ -6,7 +6,8 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Board from "./Board";
-import { Task } from "@/types/tasks";
+import { Task } from "@/types/task";
+import { DbUser } from "@/types/user";
 import { TaskService } from "@/services/task.service";
 
 /**
@@ -28,15 +29,15 @@ export default async function Dashboard() {
 
   const assigneesData = await TaskService.findAssigneesForTasks(allTaskIds);
 
-  const assigneesMap = new Map<string, string[]>();
+  const assigneesMap = new Map<string, DbUser[]>();
   for (const row of assigneesData) {
     const existing = assigneesMap.get(row.taskId) || [];
-    assigneesMap.set(row.taskId, [...existing, row.email]);
+    assigneesMap.set(row.taskId, [...existing, row.user]);
   }
 
-  const tasks: Task[] = rawTasksWithCreator.map(({ task, creatorEmail }) => ({
+  const tasks: Task[] = rawTasksWithCreator.map(({ task, user }) => ({
     ...task,
-    creator: creatorEmail,
+    creator: user,
     assignees: assigneesMap.get(task.id) || [],
     isCreator: task.userId === currentUserId,
   }));

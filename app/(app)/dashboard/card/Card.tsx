@@ -6,11 +6,27 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { CardProps, TaskStatus } from "@/types/tasks";
+import { Task, TaskStatus } from "@/types/task";
 import CardActions from "./CardActions";
 import CardAvatars from "./CardAvatars";
 import CardDueDate from "./CardDueDate";
 import CardPriority from "./CardPriority";
+
+/**
+ * Properties for the Card component.
+ *
+ * @interface CardProps
+ * @property {Task} task - The task data object to render.
+ * @property {boolean} [isUpdating] - Flag indicating whether the card is currently undergoing an asynchronous update operation.
+ * @property {(taskId: string, newStatus: TaskStatus) => void} [onStatusChange] - Callback triggered when the task status changes.
+ * @property {(taskId: string) => void} [onDelete] - Callback triggered when the task is deleted.
+ */
+export interface CardProps {
+  task: Task;
+  isUpdating?: boolean;
+  onStatusChange?: (taskId: string, newStatus: TaskStatus) => void;
+  onDelete?: (taskId: string) => void;
+}
 
 /**
  * Renders an interactive card container handling drag-and-drop actions, loading states,

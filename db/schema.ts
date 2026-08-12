@@ -46,6 +46,9 @@ export const usersTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  color: text("color").default("bg-indigo-500").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -91,3 +94,4 @@ export const taskAssigneesTable = pgTable(
 // ==========================================
 
 export type Task = typeof tasksTable.$inferSelect;
+export type User = typeof usersTable.$inferSelect;

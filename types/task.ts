@@ -1,18 +1,20 @@
 /**
- * @file types/tasks.ts
- * @description Type definitions, interfaces, and UI configuration mappings for task management and views.
+ * @file types/task.ts
+ * @description Central type definitions and global configurations for task management.
  */
 
 import {
   taskPriorityEnum,
   taskStatusEnum,
   type Task as DbTask,
+  type User as DbUser,
 } from "@/db/schema";
 
 // ==========================================
 // Types
 // ==========================================
 
+export type { DbTask };
 export type TaskStatus = (typeof taskStatusEnum.enumValues)[number];
 export type TaskPriority = (typeof taskPriorityEnum.enumValues)[number];
 
@@ -20,14 +22,10 @@ export type TaskPriority = (typeof taskPriorityEnum.enumValues)[number];
 // Interfaces
 // ==========================================
 
-export interface Task extends Omit<DbTask, "dueDate"> {
-  assignees?: string[];
-  creator?: string;
-  isCreator?: boolean;
-}
-
-export interface RouteContext {
-  params: Promise<{ id: string }>;
+export interface Task extends DbTask {
+  creator: DbUser;
+  assignees: DbUser[];
+  isCreator: boolean;
 }
 
 export interface TaskPriorityConfig {
@@ -35,25 +33,8 @@ export interface TaskPriorityConfig {
   className: string;
 }
 
-export interface ColumnConfig {
-  id: TaskStatus;
-  title: string;
-  color: string;
-}
-
-export interface ColumnProps extends ColumnConfig {
-  count: number;
-  tasks: Task[];
-  updatingTaskIds?: Set<string>;
-  onTaskMove?: (taskId: string, targetStatus: TaskStatus) => void;
-  onTaskDelete?: (taskId: string) => void;
-}
-
-export interface CardProps {
-  task: Task;
-  isUpdating?: boolean;
-  onStatusChange?: (taskId: string, newStatus: TaskStatus) => void;
-  onDelete?: (taskId: string) => void;
+export interface RouteContext {
+  params: Promise<{ id: string }>;
 }
 
 // ==========================================
@@ -80,4 +61,4 @@ export const COLUMNS = [
   { id: "in_progress", title: "In Progress", color: "bg-indigo-500" },
   { id: "await_feedback", title: "Await Feedback", color: "bg-amber-500" },
   { id: "done", title: "Done", color: "bg-emerald-500" },
-] as const satisfies readonly ColumnConfig[];
+] as const;
