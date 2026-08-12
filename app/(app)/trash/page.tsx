@@ -1,15 +1,14 @@
 /**
  * @file trash/page.tsx
- * @description Server component rendering the trash management view, fetching soft-deleted tasks belonging to the authenticated user.
+ * @description Server component rendering the trash management view using the TaskService.
  */
 
-import { db } from "@/db";
-import { Task, tasksTable, usersTable } from "@/db/schema";
-import { eq, and, isNotNull } from "drizzle-orm";
+import { Task } from "@/db/schema";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import TrashList from "./TrashList";
-import TrashHeader from "./components/TrashHeader";
+import TrashList from "../trash/TrashList";
+import TrashHeader from "../trash/components/TrashHeader";
+import { TaskService } from "@/services/task.service";
 
 /**
  * Renders the trash page verifying user authentication, querying soft-deleted tasks,
@@ -24,19 +23,8 @@ export default async function TrashPage() {
 
   const currentUserId = session.user.id;
 
-  const rawTrashedTasks = await db
-    .select({
-      task: tasksTable,
-      creatorEmail: usersTable.email,
-    })
-    .from(tasksTable)
-    .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))
-    .where(
-      and(
-        eq(tasksTable.userId, currentUserId),
-        isNotNull(tasksTable.deletedAt),
-      ),
-    );
+  const rawTrashedTasks =
+    await TaskService.findTrashTasksForUser(currentUserId);
 
   const tasks: Task[] = rawTrashedTasks.map(({ task }) => ({
     ...task,

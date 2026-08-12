@@ -1,11 +1,8 @@
 /**
  * @file dashboard/page.tsx
- * @description Server component rendering the main dashboard page, handling authentication, fetching active tasks with assignees and creators, and passing data to the board container.
+ * @description Server component rendering the main dashboard page using the TaskService.
  */
 
-import { db } from "@/db";
-import { taskAssigneesTable, usersTable } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Board from "./Board";
@@ -14,37 +11,22 @@ import { TaskService } from "@/services/task.service";
 
 /**
  * Renders the dashboard page component with user session validation,
- * optimized database queries for active tasks, and team assignees
+ * optimized database queries for active tasks, and team assignees.
  *
  * @async
  * @returns {Promise<JSX.Element>} The rendered dashboard page component.
  */
 export default async function Dashboard() {
   const session = await auth();
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
+  if (!session?.user?.id) redirect("/login");
 
   const currentUserId = session.user.id;
-
-  // All active (not deleted) tasks for which the user is either the creator or the assignee
 
   const rawTasksWithCreator =
     await TaskService.findActiveTasksForUser(currentUserId);
   const allTaskIds = rawTasksWithCreator.map((item) => item.task.id);
 
-  // Load all assignees for these tasks
-  const assigneesData =
-    allTaskIds.length > 0
-      ? await db
-          .select({
-            taskId: taskAssigneesTable.taskId,
-            email: usersTable.email,
-          })
-          .from(taskAssigneesTable)
-          .innerJoin(usersTable, eq(taskAssigneesTable.userId, usersTable.id))
-          .where(inArray(taskAssigneesTable.taskId, allTaskIds))
-      : [];
+  const assigneesData = await TaskService.findAssigneesForTasks(allTaskIds);
 
   const assigneesMap = new Map<string, string[]>();
   for (const row of assigneesData) {
