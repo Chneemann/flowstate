@@ -4,7 +4,7 @@
  */
 
 import { db } from "@/db";
-import { tasksTable } from "@/db/schema";
+import { Task, tasksTable, usersTable } from "@/db/schema";
 import { eq, and, isNotNull } from "drizzle-orm";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
@@ -22,20 +22,31 @@ export default async function TrashPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const trashedTasks = await db
-    .select()
+  const currentUserId = session.user.id;
+
+  const rawTrashedTasks = await db
+    .select({
+      task: tasksTable,
+      creatorEmail: usersTable.email,
+    })
     .from(tasksTable)
+    .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))
     .where(
       and(
-        eq(tasksTable.userId, session.user.id),
+        eq(tasksTable.userId, currentUserId),
         isNotNull(tasksTable.deletedAt),
       ),
     );
 
+  const tasks: Task[] = rawTrashedTasks.map(({ task }) => ({
+    ...task,
+    isCreator: task.userId === currentUserId,
+  }));
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       <TrashHeader />
-      <TrashList tasks={trashedTasks} />
+      <TrashList tasks={tasks} />
     </div>
   );
 }

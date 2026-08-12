@@ -21,10 +21,12 @@ import { COLUMNS, TaskStatus } from "@/types/tasks";
  */
 export default function CardActions({
   currentStatus,
+  isCreator,
   onMove,
   onDelete,
 }: {
   currentStatus: TaskStatus;
+  isCreator: boolean;
   onMove: (newStatus: TaskStatus) => void;
   onDelete: () => void;
 }) {
@@ -113,18 +115,22 @@ export default function CardActions({
             </button>
           );
         })}
-        <div className="h-px bg-border my-1" />
 
         {/* Delete Button */}
-        <button
-          onClick={handleDeleteClick}
-          className="w-full text-left px-3 py-2 rounded-lg hover:bg-destructive hover:text-foreground flex items-center justify-between text-destructive group/del transition-colors cursor-pointer font-medium"
-        >
-          <span className="flex items-center gap-2">
-            <Trash2 size={12} />
-            Delete Task
-          </span>
-        </button>
+        {isCreator && (
+          <>
+            <div className="h-px bg-border my-2" />
+            <button
+              onClick={handleDeleteClick}
+              className="w-full text-left px-3 py-2 rounded-lg hover:bg-destructive hover:text-foreground flex items-center justify-between text-destructive group/del transition-colors cursor-pointer font-medium"
+            >
+              <span className="flex items-center gap-2">
+                <Trash2 size={12} />
+                Delete Task
+              </span>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

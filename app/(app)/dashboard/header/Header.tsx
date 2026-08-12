@@ -9,19 +9,28 @@ import { Sparkles } from "lucide-react";
 import DeleteDropZone from "./DeleteDropZone";
 import TrashLink from "./TrashLink";
 import NewTaskButton from "./NewTaskButton";
+import { useState } from "react";
+
+/**
+ * Properties for the Header component.
+ *
+ * @interface HeaderProps
+ * @property {(taskId: string) => void} onTaskDelete - Callback function triggered when a task is dropped into the delete zone.
+ */
+interface HeaderProps {
+  onTaskDelete: (taskId: string) => void;
+}
 
 /**
  * Renders the dashboard header section featuring title text, a task deletion drop zone,
- * a new task action button, and a link to the trash bin.
+ * and conditionally displays the new task action button and trash link based on the drag state.
  *
  * @param {HeaderProps} props - The component props.
  * @returns {JSX.Element} The rendered dashboard header component.
  */
-export default function Header({
-  onTaskDelete,
-}: {
-  onTaskDelete: (taskId: string) => void;
-}) {
+export default function Header({ onTaskDelete }: HeaderProps) {
+  const [isDraggingActive, setIsDraggingActive] = useState(false);
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
@@ -36,11 +45,16 @@ export default function Header({
       </div>
 
       <div className="flex items-center gap-3">
-        <DeleteDropZone onTaskDelete={onTaskDelete} />
-        <div className="flex items-center gap-3 peer-not-empty:hidden">
-          <NewTaskButton />
-          <TrashLink />
-        </div>
+        <DeleteDropZone
+          onTaskDelete={onTaskDelete}
+          onDragStateChange={setIsDraggingActive}
+        />
+        {!isDraggingActive && (
+          <div className="flex items-center gap-3 animate-in fade-in duration-200">
+            <NewTaskButton />
+            <TrashLink />
+          </div>
+        )}
       </div>
     </div>
   );

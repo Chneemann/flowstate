@@ -21,9 +21,9 @@ export type TaskPriority = (typeof taskPriorityEnum.enumValues)[number];
 // ==========================================
 
 export interface Task extends Omit<DbTask, "dueDate"> {
-  dueDate?: Date | null;
   assignees?: string[];
   creator?: string;
+  isCreator?: boolean;
 }
 
 export interface RouteContext {

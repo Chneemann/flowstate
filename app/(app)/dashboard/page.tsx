@@ -4,17 +4,8 @@
  */
 
 import { db } from "@/db";
-import { tasksTable, taskAssigneesTable, usersTable } from "@/db/schema";
-import {
-  and,
-  count,
-  eq,
-  inArray,
-  isNotNull,
-  isNull,
-  or,
-  exists,
-} from "drizzle-orm";
+import { taskAssigneesTable, usersTable } from "@/db/schema";
+import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Board from "./Board";
@@ -65,8 +56,7 @@ export default async function Dashboard() {
     ...task,
     creator: creatorEmail,
     assignees: assigneesMap.get(task.id) || [],
-    tags: [],
-    commentsCount: 0,
+    isCreator: task.userId === currentUserId,
   }));
 
   return (

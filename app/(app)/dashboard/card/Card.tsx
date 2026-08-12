@@ -37,6 +37,7 @@ export default function Card({
     }
     e.dataTransfer.setData("text/plain", task.id);
     e.dataTransfer.setData("sourceStatus", task.status);
+    e.dataTransfer.setData("isCreator", String(task.isCreator ?? false));
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -88,6 +89,7 @@ export default function Card({
           <CardAvatars creator={task.creator} assignees={task.assignees} />
           <CardActions
             currentStatus={task.status}
+            isCreator={task.isCreator ?? false}
             onMove={handleMove}
             onDelete={() => onDelete?.(task.id)}
           />

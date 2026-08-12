@@ -1,6 +1,6 @@
 /**
  * @file dashboard/header/DeleteDropZone.tsx
- * @description Client component rendering an interactive drop zone for deleting tasks during drag-and-drop.
+ * @description Client component rendering an interactive drop zone for deleting tasks during drag-and-drop operations, managing drag state and drop actions.
  */
 
 "use client";
@@ -9,26 +9,49 @@ import { useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
 
 /**
- * Renders a drop target zone that appears dynamically during drag-and-drop operations,
- * allowing users to delete tasks by dragging them onto the designated area.
+ * Properties for the DeleteDropZone component.
  *
- * @param {Object} props - The component props.
- * @param {(taskId: string) => void} props.onTaskDelete - Callback triggered when a task is dropped into the delete zone.
- * @returns {JSX.Element | null} The rendered delete drop zone component, or null if no drag operation is active.
+ * @interface DeleteDropZoneProps
+ * @property {(taskId: string) => void} onTaskDelete - Callback triggered when a valid task is dropped onto the delete zone.
+ * @property {(isDragging: boolean) => void} onDragStateChange - Callback notified when drag status and permissions change globally.
+ */
+interface DeleteDropZoneProps {
+  onTaskDelete: (taskId: string) => void;
+  onDragStateChange: (isDragging: boolean) => void;
+}
+
+/**
+ * Renders a conditional delete drop zone during active drag events, enabling task deletion
+ * when dropped onto the target area if authorized.
+ *
+ * @param {DeleteDropZoneProps} props - The component props.
+ * @returns {JSX.Element | null} The rendered drop zone component or null if no authorized drag is active.
  */
 export default function DeleteDropZone({
   onTaskDelete,
-}: {
-  onTaskDelete: (taskId: string) => void;
-}) {
+  onDragStateChange,
+}: DeleteDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [isAllowed, setIsAllowed] = useState(false);
   const [isOver, setIsOver] = useState(false);
 
   useEffect(() => {
-    const handleDragStart = () => setIsDragging(true);
+    const handleDragStart = (e: DragEvent) => {
+      const isCreatorString = e.dataTransfer?.getData("isCreator");
+      const allowed = isCreatorString === "true";
+
+      if (allowed) {
+        setIsDragging(true);
+        setIsAllowed(true);
+        onDragStateChange(true);
+      }
+    };
+
     const handleDragEnd = () => {
       setIsDragging(false);
+      setIsAllowed(false);
       setIsOver(false);
+      onDragStateChange(false);
     };
 
     window.addEventListener("dragstart", handleDragStart);
@@ -38,9 +61,9 @@ export default function DeleteDropZone({
       window.removeEventListener("dragstart", handleDragStart);
       window.removeEventListener("dragend", handleDragEnd);
     };
-  }, []);
+  }, [onDragStateChange]);
 
-  if (!isDragging) return null;
+  if (!isDragging || !isAllowed) return null;
 
   return (
     <div
@@ -58,7 +81,7 @@ export default function DeleteDropZone({
           onTaskDelete(taskId);
         }
       }}
-      className={`peer flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm border-2 border-dashed cursor-pointer select-none transition-all duration-300 ease-out transform ${
+      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm border-2 border-dashed cursor-pointer select-none transition-all duration-300 ease-out transform ${
         isOver
           ? "bg-destructive border-destructive scale-110 shadow-lg animate-pulse"
           : "bg-destructive/10 border-destructive/40 text-destructive scale-100 opacity-90 hover:opacity-100"
