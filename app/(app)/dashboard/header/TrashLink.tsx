@@ -1,21 +1,36 @@
 /**
- * @file dasboard/header/TrashLink.tsx
- * @description Client component rendering a navigation link button to the trash view with a dynamic item counter badge.
+ * @file dashboard/header/TrashLink.tsx
+ * @description Client component rendering a navigation link button to the trash view with a dynamic item counter badge fetched via SWR.
  */
 
 "use client";
 
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
+import useSWR from "swr";
 
 /**
- * Renders an interactive trash icon link featuring hover animations and an optional item count badge.
+ * Fetches data from a given URL and returns the parsed JSON response.
  *
- * @param {Object} props - The component props.
- * @param {number} props.count - The number of items currently in the trash.
- * @returns {JSX.Element} The rendered trash button component.
+ * @async
+ * @param {string} url - The target endpoint URL to fetch.
+ * @returns {Promise<any>} The JSON response data.
  */
-export default function TrashLink({ count }: { count: number }) {
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+/**
+ * Renders an interactive trash icon link featuring hover animations and a self-fetched item count badge.
+ *
+ * @returns {JSX.Element} The rendered trash link component.
+ */
+export default function TrashLink() {
+  const { data } = useSWR("/api/trash/count", fetcher, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
+
+  const count = data?.count || 0;
+
   return (
     <Link
       href="/trash"

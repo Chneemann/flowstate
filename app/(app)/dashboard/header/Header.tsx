@@ -19,10 +19,8 @@ import NewTaskButton from "./NewTaskButton";
  */
 export default function Header({
   onTaskDelete,
-  trashCount,
 }: {
   onTaskDelete: (taskId: string) => void;
-  trashCount: number;
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -41,7 +39,7 @@ export default function Header({
         <DeleteDropZone onTaskDelete={onTaskDelete} />
         <div className="flex items-center gap-3 peer-not-empty:hidden">
           <NewTaskButton />
-          <TrashLink count={trashCount} />
+          <TrashLink />
         </div>
       </div>
     </div>

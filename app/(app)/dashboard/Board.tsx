@@ -1,6 +1,6 @@
 /**
  * @file dashboard/Board.tsx
- * @description Client component wrapping the columns grid, tracking individual task update/deletion states, and handling asynchronous mutations via API.
+ * @description Client component wrapping the columns grid, tracking individual task update/deletion states, and handling asynchronous mutations via API with cache revalidation.
  */
 
 "use client";
@@ -10,23 +10,17 @@ import { useRouter } from "next/navigation";
 import Column from "./column/Column";
 import { COLUMNS, Task, TaskStatus } from "@/types/tasks";
 import Header from "./header/Header";
+import { mutate } from "swr";
 
 /**
  * Renders the responsive grid container of columns, coordinating state tracking
- * for active task updates/deletions, trash counts, and triggering mutation API requests.
+ * for active task updates/deletions, and triggering mutation API requests.
  *
  * @param {Object} props - The component props.
  * @param {Task[]} props.tasks - The array of task items displayed across the board.
- * @param {number} props.trashCount - The count of items currently in the trash bin.
  * @returns {JSX.Element} The rendered board component.
  */
-export default function Board({
-  tasks,
-  trashCount,
-}: {
-  tasks: Task[];
-  trashCount: number;
-}) {
+export default function Board({ tasks }: { tasks: Task[] }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [updatingTaskIds, setUpdatingTaskIds] = useState<Set<string>>(
@@ -35,7 +29,7 @@ export default function Board({
 
   /**
    * Updates the status of a specific task by sending a PATCH request to the API,
-   * managing loading states, and refreshing the router upon success.
+   * managing loading states, triggering SWR cache mutations for the trash count, and refreshing the router upon success.
    *
    * @param {string} taskId - The unique identifier of the task to update.
    * @param {TaskStatus} targetStatus - The new target status for the task.
@@ -54,7 +48,7 @@ export default function Board({
         if (!response.ok) {
           throw new Error("Failed to update task status");
         }
-
+        mutate("/api/trash/count");
         await router.refresh();
       } catch (error) {
         console.error("Error during task status update:", error);
@@ -70,7 +64,7 @@ export default function Board({
 
   /**
    * Deletes a specific task by sending a DELETE request to the API,
-   * managing loading states, and refreshing the router upon success.
+   * managing loading states, triggering SWR cache mutations for the trash count, and refreshing the router upon success.
    *
    * @param {string} taskId - The unique identifier of the task to delete.
    */
@@ -84,6 +78,7 @@ export default function Board({
         });
 
         if (!response.ok) throw new Error("Failed to delete task");
+        mutate("/api/trash/count");
         await router.refresh();
       } catch (error) {
         console.error("Error during task deletion:", error);
@@ -100,7 +95,7 @@ export default function Board({
   return (
     <div className="space-y-8">
       {/* Workspace Header */}
-      <Header onTaskDelete={deleteTask} trashCount={trashCount} />
+      <Header onTaskDelete={deleteTask} />
 
       {/* Columns Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">

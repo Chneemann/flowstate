@@ -1,6 +1,6 @@
 /**
  * @file dashboard/page.tsx
- * @description Server component rendering the main dashboard page, handling authentication, fetching active tasks with assignees and creators, computing trash counts, and passing data to the board container.
+ * @description Server component rendering the main dashboard page, handling authentication, fetching active tasks with assignees and creators, and passing data to the board container.
  */
 
 import { db } from "@/db";
@@ -23,7 +23,7 @@ import { TaskService } from "@/services/task.service";
 
 /**
  * Renders the dashboard page component with user session validation,
- * optimized database queries for active tasks, team assignees, and soft-deleted trash counts.
+ * optimized database queries for active tasks, and team assignees
  *
  * @async
  * @returns {Promise<JSX.Element>} The rendered dashboard page component.
@@ -69,22 +69,9 @@ export default async function Dashboard() {
     commentsCount: 0,
   }));
 
-  // Check the trash counter
-  const [trashCountResult] = await db
-    .select({ count: count() })
-    .from(tasksTable)
-    .where(
-      and(
-        eq(tasksTable.userId, currentUserId),
-        isNotNull(tasksTable.deletedAt),
-      ),
-    );
-
-  const trashCount = trashCountResult.count;
-
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
-      <Board tasks={tasks} trashCount={trashCount} />
+      <Board tasks={tasks} />
     </div>
   );
 }

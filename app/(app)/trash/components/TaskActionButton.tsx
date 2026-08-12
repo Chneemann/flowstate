@@ -8,6 +8,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RotateCcw, Trash2, Loader2 } from "lucide-react";
+import { mutate } from "swr";
 
 /**
  * Renders an action button for either restoring or permanently deleting a task,
@@ -53,7 +54,7 @@ export default function TaskActionButton({
         const data = await response.json();
         if (!response.ok)
           throw new Error(data.error || `Failed to ${action} task`);
-
+        mutate("/api/trash/count");
         router.refresh();
       } catch (error) {
         console.error(`Error during task ${action}:`, error);
