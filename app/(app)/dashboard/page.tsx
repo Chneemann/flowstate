@@ -1,20 +1,29 @@
 /**
  * @file dashboard/page.tsx
- * @description Server component rendering the main dashboard page, handling authentication, fetching active user-related tasks and assignees, computing trash counts, and passing data to the board container.
+ * @description Server component rendering the main dashboard page, handling authentication, fetching active tasks with assignees and creators, computing trash counts, and passing data to the board container.
  */
 
 import { db } from "@/db";
 import { tasksTable, taskAssigneesTable, usersTable } from "@/db/schema";
-import { and, count, eq, inArray, isNotNull, isNull, or } from "drizzle-orm";
+import {
+  and,
+  count,
+  eq,
+  inArray,
+  isNotNull,
+  isNull,
+  or,
+  exists,
+} from "drizzle-orm";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Board from "./Board";
 import { Task } from "@/types/tasks";
+import { TaskService } from "@/services/task.service";
 
 /**
  * Renders the dashboard page component with user session validation,
- * database queries for active tasks, team assignees, and soft-deleted trash counts,
- * before passing the structured dataset to the board container.
+ * optimized database queries for active tasks, team assignees, and soft-deleted trash counts.
  *
  * @async
  * @returns {Promise<JSX.Element>} The rendered dashboard page component.
@@ -27,34 +36,13 @@ export default async function Dashboard() {
 
   const currentUserId = session.user.id;
 
-  const assignedTaskRows = await db
-    .select({ taskId: taskAssigneesTable.taskId })
-    .from(taskAssigneesTable)
-    .where(eq(taskAssigneesTable.userId, currentUserId));
+  // All active (not deleted) tasks for which the user is either the creator or the assignee
 
-  const assignedTaskIds = assignedTaskRows.map((r) => r.taskId);
-
-  const taskWhereClause = and(
-    isNull(tasksTable.deletedAt),
-    assignedTaskIds.length > 0
-      ? or(
-          eq(tasksTable.userId, currentUserId),
-          inArray(tasksTable.id, assignedTaskIds),
-        )
-      : eq(tasksTable.userId, currentUserId),
-  );
-
-  const rawTasksWithCreator = await db
-    .select({
-      task: tasksTable,
-      creatorEmail: usersTable.email,
-    })
-    .from(tasksTable)
-    .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))
-    .where(taskWhereClause);
-
+  const rawTasksWithCreator =
+    await TaskService.findActiveTasksForUser(currentUserId);
   const allTaskIds = rawTasksWithCreator.map((item) => item.task.id);
 
+  // Load all assignees for these tasks
   const assigneesData =
     allTaskIds.length > 0
       ? await db
@@ -81,6 +69,7 @@ export default async function Dashboard() {
     commentsCount: 0,
   }));
 
+  // Check the trash counter
   const [trashCountResult] = await db
     .select({ count: count() })
     .from(tasksTable)

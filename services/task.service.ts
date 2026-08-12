@@ -8,9 +8,10 @@ import {
   tasksTable,
   taskAssigneesTable,
   type Task as DbTask,
+  usersTable,
 } from "@/db/schema";
 import { TaskStatus } from "@/types/tasks";
-import { and, eq, or, exists, isNotNull } from "drizzle-orm";
+import { and, eq, or, exists, isNotNull, isNull } from "drizzle-orm";
 
 /**
  * Service class for handling task-related operations and database interactions.
@@ -96,6 +97,43 @@ export class TaskService {
       .returning();
 
     return (updatedTask as DbTask | undefined) || null;
+  }
+
+  /**
+   * Retrieves all active (non-deleted) tasks that a user is authorized to see
+   * (either as the creator or as an assignee), including their creator emails.
+   *
+   * @async
+   * @param {string} userId - The unique identifier of the user.
+   * @returns {Promise<any[]>} The list of active tasks with creator information.
+   */
+  static async findActiveTasksForUser(userId: string) {
+    return await db
+      .select({
+        task: tasksTable,
+        creatorEmail: usersTable.email,
+      })
+      .from(tasksTable)
+      .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))
+      .where(
+        and(
+          isNull(tasksTable.deletedAt),
+          or(
+            eq(tasksTable.userId, userId),
+            exists(
+              db
+                .select()
+                .from(taskAssigneesTable)
+                .where(
+                  and(
+                    eq(taskAssigneesTable.taskId, tasksTable.id),
+                    eq(taskAssigneesTable.userId, userId),
+                  ),
+                ),
+            ),
+          ),
+        ),
+      );
   }
 
   /**
