@@ -104,6 +104,7 @@ export default function Card({
         <div className="flex items-center gap-2">
           <CardAvatars creator={task.creator} assignees={task.assignees} />
           <CardActions
+            taskId={task.id}
             currentStatus={task.status}
             isCreator={task.isCreator ?? false}
             onMove={handleMove}

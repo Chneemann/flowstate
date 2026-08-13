@@ -6,13 +6,13 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
-import DeleteDropZone from "./DeleteDropZone";
 import TrashLink from "./TrashLink";
 import NewTaskButton from "./NewTaskButton";
 import { useState } from "react";
+import ActionDropZones from "./ActionDropZones";
 
 /**
- * Renders the dashboard header section featuring title text, a task deletion drop zone,
+ * Renders the dashboard header section featuring title text, drop zones,
  * and conditionally displays the new task action button and trash link based on the drag state.
  *
  * @param {Object} props - The component props.
@@ -40,7 +40,7 @@ export default function Header({
       </div>
 
       <div className="flex items-center gap-3">
-        <DeleteDropZone
+        <ActionDropZones
           onTaskDelete={onTaskDelete}
           onDragStateChange={setIsDraggingActive}
         />

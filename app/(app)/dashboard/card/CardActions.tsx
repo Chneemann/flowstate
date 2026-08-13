@@ -1,24 +1,27 @@
 /**
  * @file dashboard/card/CardActions.tsx
- * @description Client component rendering the mobile status transition and deletion dropdown for a card.
+ * @description Client component rendering the mobile status transition, edit option, and deletion dropdown for a card.
  */
 
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MoreHorizontal, CornerDownRight, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { MoreHorizontal, CornerDownRight, Trash2, Pencil } from "lucide-react";
 import { COLUMNS, TaskStatus } from "@/types/task";
 
 /**
  * Properties for the CardActions component.
  *
  * @interface CardActionsProps
+ * @property {string} taskId - The unique identifier of the task.
  * @property {TaskStatus} currentStatus - The current status category of the task.
  * @property {boolean} isCreator - Flag indicating whether the current user is the creator of the task.
  * @property {(newStatus: TaskStatus) => void} onMove - Callback function triggered when a new status column is selected.
  * @property {() => void} onDelete - Callback function triggered when the delete action is selected.
  */
 interface CardActionsProps {
+  taskId: string;
   currentStatus: TaskStatus;
   isCreator: boolean;
   onMove: (newStatus: TaskStatus) => void;
@@ -27,17 +30,19 @@ interface CardActionsProps {
 
 /**
  * Renders a mobile-only action menu component allowing users to move a task
- * between different columns or delete it entirely via a dropdown interface.
+ * between different columns, edit it, or delete it entirely via a dropdown interface.
  *
  * @param {CardActionsProps} props - The component props.
  * @returns {JSX.Element} The rendered mobile card actions component.
  */
 export default function CardActions({
+  taskId,
   currentStatus,
   isCreator,
   onMove,
   onDelete,
 }: CardActionsProps) {
+  const router = useRouter();
   const [showMobileActions, setShowMobileActions] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -73,6 +78,19 @@ export default function CardActions({
   };
 
   /**
+   * Handles clicking the edit action item to navigate to the task edit view if a valid ID exists.
+   *
+   * @param {React.MouseEvent} e - The mouse event object.
+   */
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (taskId) {
+      router.push(`/tasks?task=edit&id=${taskId}`);
+    }
+    setShowMobileActions(false);
+  };
+
+  /**
    * Handles clicking the delete action item to trigger task deletion.
    *
    * @param {React.MouseEvent} e - The mouse event object.
@@ -92,7 +110,7 @@ export default function CardActions({
           setShowMobileActions(!showMobileActions);
         }}
         className="p-1.5 rounded-lg border border-border bg-background/50 text-foreground-muted transition-all cursor-pointer hover:text-foreground hover:border-primary-hover flex items-center justify-center"
-        title="Move Task"
+        title="Task Actions"
       >
         <MoreHorizontal size={14} />
       </button>
@@ -124,10 +142,20 @@ export default function CardActions({
           );
         })}
 
-        {/* Delete Button */}
+        {/* Creator Actions: Edit & Delete */}
         {isCreator && (
           <>
             <div className="h-px bg-border my-2" />
+            <button
+              onClick={handleEditClick}
+              disabled={!taskId}
+              className="w-full text-left px-3 py-2 rounded-lg hover:bg-primary-hover hover:text-black flex items-center justify-between text-foreground-muted group/edit transition-colors cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="flex items-center gap-2">
+                <Pencil size={12} />
+                Edit Task
+              </span>
+            </button>
             <button
               onClick={handleDeleteClick}
               className="w-full text-left px-3 py-2 rounded-lg hover:bg-destructive hover:text-foreground flex items-center justify-between text-destructive group/del transition-colors cursor-pointer font-medium"
