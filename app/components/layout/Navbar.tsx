@@ -7,7 +7,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Trash2 } from "lucide-react";
+import { LayoutDashboard, FileText, Trash2, FilePenLine } from "lucide-react";
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -18,6 +18,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const navItems = [
   { name: "Summary", href: "/summary", icon: FileText },
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Add Task", href: "/tasks?task=new", icon: FilePenLine },
   { name: "Trash", href: "/trash", icon: Trash2 },
 ];
 

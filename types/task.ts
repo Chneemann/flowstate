@@ -39,6 +39,13 @@ export interface ColumnConfig {
   color: string;
 }
 
+export interface TaskPayload extends Omit<
+  DbTask,
+  "id" | "userId" | "createdAt" | "updatedAt" | "deletedAt"
+> {
+  assignees?: string[];
+}
+
 export interface RouteContext {
   params: Promise<{ id: string }>;
 }
