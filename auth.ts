@@ -1,6 +1,6 @@
 /**
  * @file auth.ts
- * @description NextAuth configuration file setting up credentials authentication, database lookups via Drizzle, JWT sessions, and custom pages.
+ * @description NextAuth configuration file setting up credentials authentication, database lookups via Drizzle, JWT sessions, custom pages, and a secure server-side sign out handler.
  */
 
 import NextAuth from "next-auth";
@@ -21,11 +21,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       /**
-       * Authorizes a user by verifying their email and comparing hashed passwords from the database.
+       * Authorizes a user by verifying their email and comparing hashed passwords from the database,
+       * updating login tracking info upon success.
        *
        * @async
        * @param {Record<string, any>} [credentials] - The user credentials submitted via the sign-in form.
-       * @returns {Promise<{ id: string; email: string } | null>} The authenticated user object or null if authorization fails.
+       * @returns {Promise<{ id: string } | null>} The authenticated user object containing the ID or null if authorization fails.
        */
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
@@ -43,7 +44,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!passwordsMatch) return null;
 
-        return { id: String(user.id), email: user.email };
+        await db
+          .update(usersTable)
+          .set({
+            lastLogin: new Date(),
+            isOnline: true,
+          })
+          .where(eq(usersTable.id, user.id));
+
+        return { id: String(user.id) };
       },
     }),
   ],
@@ -86,3 +95,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 });
+
+/**
+ * Handles the secure logout process, setting the user's online status to false in the database
+ * and destroying the active session.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
+export async function handleSignOut() {
+  "use server";
+
+  const session = await auth();
+
+  if (session?.user?.id) {
+    await db
+      .update(usersTable)
+      .set({ isOnline: false })
+      .where(eq(usersTable.id, session.user.id));
+  }
+
+  await signOut({ redirectTo: "/" });
+}

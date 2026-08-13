@@ -33,6 +33,12 @@ export interface TaskPriorityConfig {
   className: string;
 }
 
+export interface ColumnConfig {
+  id: TaskStatus;
+  title: string;
+  color: string;
+}
+
 export interface RouteContext {
   params: Promise<{ id: string }>;
 }
@@ -61,4 +67,4 @@ export const COLUMNS = [
   { id: "in_progress", title: "In Progress", color: "bg-indigo-500" },
   { id: "await_feedback", title: "Await Feedback", color: "bg-amber-500" },
   { id: "done", title: "Done", color: "bg-emerald-500" },
-] as const;
+] as const satisfies readonly ColumnConfig[];

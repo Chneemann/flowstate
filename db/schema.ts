@@ -4,6 +4,7 @@
  */
 
 import {
+  boolean,
   pgEnum,
   pgTable,
   primaryKey,
@@ -49,6 +50,8 @@ export const usersTable = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   color: text("color").default("bg-indigo-500").notNull(),
+  lastLogin: timestamp("last_login"),
+  isOnline: boolean("is_online").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

@@ -24,7 +24,7 @@ interface UserAvatarProps {
 }
 
 /**
- * Renders a single user avatar circle with optional crown badge.
+ * Renders a single user avatar circle with online status and optional crown badge.
  *
  * @param {UserAvatarProps} props - The component props.
  * @returns {JSX.Element} The rendered user avatar component.
@@ -33,6 +33,7 @@ function UserAvatar({ user, title, isCreator }: UserAvatarProps) {
   const fullName = `${user.firstName} ${user.lastName}`;
   const initials = getInitials(user.firstName, user.lastName);
   const bgColor = user.color;
+  const isOnline = user.isOnline;
 
   return (
     <div
@@ -45,6 +46,10 @@ function UserAvatar({ user, title, isCreator }: UserAvatarProps) {
       >
         {initials}
       </div>
+
+      {isOnline && (
+        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-card bg-emerald-500" />
+      )}
 
       {isCreator && (
         <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-amber-600 rounded-full border-2 border-border flex items-center justify-center shadow-sm">

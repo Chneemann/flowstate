@@ -9,25 +9,19 @@ import { useState } from "react";
 import Card from "../card/Card";
 import ColumnHeader from "./ColumnHeader";
 import ColumnEmptyState from "./ColumnEmptyState";
-import { Task, TaskStatus } from "@/types/task";
+import { ColumnConfig, Task, TaskStatus } from "@/types/task";
 
 /**
  * Properties for the Column component.
  *
  * @interface ColumnProps
- * @property {TaskStatus} id - The unique status identifier for the column.
- * @property {string} title - The display title of the column.
- * @property {string} color - The indicator color styling for the column header.
  * @property {number} count - The total count of tasks within this column.
  * @property {Task[]} tasks - The array of tasks belonging to this column.
  * @property {Set<string>} [updatingTaskIds] - A set of task IDs currently undergoing updates.
  * @property {(taskId: string, targetStatus: TaskStatus) => void} [onTaskMove] - Callback triggered when a task is moved to a new status column.
  * @property {(taskId: string) => void} [onTaskDelete] - Callback triggered when a task deletion is requested.
  */
-export interface ColumnProps {
-  id: TaskStatus;
-  title: string;
-  color: string;
+export interface ColumnProps extends ColumnConfig {
   count: number;
   tasks: Task[];
   updatingTaskIds?: Set<string>;

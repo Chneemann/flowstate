@@ -1,24 +1,19 @@
 /**
  * @file SignOutButton.tsx
- * @description Server Action-powered client component that allows users to sign out and redirect to the home page.
+ * @description Server Action-powered client component rendering a sign-out button that triggers session termination via a server action.
  */
 
-import { signOut } from "@/auth";
+import { handleSignOut } from "@/auth";
 import { LogOut } from "lucide-react";
 
 /**
- * Renders a sign-out button using a Server Action to securely terminate the user session.
+ * Renders a form containing a submit button to securely sign out the current user session using a server action.
  *
  * @returns {JSX.Element} The rendered sign-out button component.
  */
 export default function SignOutButton() {
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signOut({ redirectTo: "/" });
-      }}
-    >
+    <form action={handleSignOut}>
       <button
         type="submit"
         className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium hover:text-primary-hover transition-colors w-full cursor-pointer"

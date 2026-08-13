@@ -12,11 +12,11 @@ import { eq } from "drizzle-orm";
  */
 export class UserService {
   /**
-   * Retrieves specific profile information (firstName, lastName, color) for a user by ID.
+   * Retrieves specific profile information (firstName, lastName, color, online status) for a user by ID.
    *
    * @async
    * @param {string} userId - The unique identifier of the user.
-   * @returns {Promise<{ firstName: string; lastName: string; color: string } | null>} The user profile data or null.
+   * @returns {Promise<{ firstName: string; lastName: string; color: string; isOnline: boolean; lastLogin: Date } | null>} The user profile data or null.
    */
   static async findProfileById(userId: string) {
     const [user] = await db
@@ -24,6 +24,8 @@ export class UserService {
         firstName: usersTable.firstName,
         lastName: usersTable.lastName,
         color: usersTable.color,
+        isOnline: usersTable.isOnline,
+        lastLogin: usersTable.lastLogin,
       })
       .from(usersTable)
       .where(eq(usersTable.id, userId));
