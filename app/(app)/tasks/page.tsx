@@ -43,11 +43,12 @@ export default async function TaskPage({ searchParams }: TaskPageProps) {
   let initialData = undefined;
 
   if (params.task === "edit" && params.id) {
-    if (!UUID_REGEX.test(params.id)) redirect("/dashboard");
+    if (!UUID_REGEX.test(params.id))
+      redirect("/dashboard?error=task_not_found");
 
     initialData = await TaskService.getEditableTask(params.id, session.user.id);
 
-    if (!initialData) redirect("/dashboard");
+    if (!initialData) redirect("/dashboard?error=unauthorized_edit");
   }
 
   const users = await db

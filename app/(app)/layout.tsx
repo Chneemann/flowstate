@@ -1,6 +1,6 @@
 /**
  * @file layout.tsx
- * @description Server component layout protecting authenticated routes, verifying user session status, and rendering the responsive application shell structure.
+ * @description Server component layout protecting authenticated routes, verifying user session status, and rendering the responsive application shell structure with global toast notifications.
  */
 
 import { auth } from "@/auth";
@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import Sidebar from "@/app/components/layout/Sidebar";
 import Header from "@/app/components/layout/Header";
 import Navbar from "@/app/components/layout/Navbar";
+import ErrorToast from "../components/ErrorToast";
 
 /**
  * Renders the protected application layout wrapper.
@@ -31,6 +32,7 @@ export default async function AppLayout({
 
   return (
     <>
+      <ErrorToast />
       <div className="hidden md:flex">
         <Sidebar />
       </div>
