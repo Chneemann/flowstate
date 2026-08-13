@@ -86,6 +86,7 @@ export default function Column(props: ColumnProps) {
       }`}
     >
       <ColumnHeader
+        id={props.id}
         title={props.title}
         color={props.color}
         count={props.count}

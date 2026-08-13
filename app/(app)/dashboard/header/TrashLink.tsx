@@ -34,11 +34,11 @@ export default function TrashLink() {
   return (
     <Link
       href="/trash"
-      className="relative group p-2 rounded-xl border border-border hover:border-primary transition-all duration-200"
+      className="relative group p-2 rounded-xl border border-border hover:border-primary transition-all duration-200 active:scale-95 cursor-pointer"
       title="View Trash"
     >
       <Trash2
-        size={16}
+        size={18}
         className="text-foreground-muted group-hover:text-primary transition-colors"
       />
       {count > 0 && (

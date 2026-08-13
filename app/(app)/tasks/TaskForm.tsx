@@ -7,7 +7,7 @@
 
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { DbTask } from "@/types/task";
+import { DbTask, TaskStatus } from "@/types/task";
 import { useTaskForm } from "./useTaskForm";
 import TaskHeader from "./task/TaskHeader";
 import TaskBasicInfo from "./task/TaskBasicInfo";
@@ -22,12 +22,15 @@ import TaskDateTime from "./task/TaskDateTime";
  * @property {{ id: string; email: string }[]} users - The list of available users who can be assigned to the task.
  * @property {DbTask & { assignees?: { id: string }[] }} [initialData] - Optional initial task data for editing an existing task.
  * @property {string} [mode] - Optional mode indicator (e.g., create or edit).
+ * @property {string | null} [serverError] - Optional server-side error message.
+ * @property {TaskStatus} [defaultStatus] - Optional default status for new tasks.
  */
 interface TaskFormProps {
   users: { id: string; email: string }[];
   initialData?: DbTask & { assignees?: { id: string }[] };
   mode?: string;
   serverError?: string | null;
+  defaultStatus?: TaskStatus;
 }
 
 /**
@@ -37,7 +40,12 @@ interface TaskFormProps {
  * @param {TaskFormProps} props - The component props.
  * @returns {JSX.Element} The rendered task form component.
  */
-export default function TaskForm({ users, initialData, mode }: TaskFormProps) {
+export default function TaskForm({
+  users,
+  initialData,
+  mode,
+  defaultStatus,
+}: TaskFormProps) {
   const {
     form,
     error,
@@ -46,7 +54,7 @@ export default function TaskForm({ users, initialData, mode }: TaskFormProps) {
     updateField,
     handleAssigneeToggle,
     handleSubmit,
-  } = useTaskForm(initialData, mode);
+  } = useTaskForm(initialData, mode, defaultStatus);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 mx-auto">

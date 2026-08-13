@@ -11,13 +11,15 @@ import { TaskPriority, TaskStatus, DbTask } from "@/types/task";
  * Custom React hook that encapsulates form state management, field updates, assignee toggling,
  * validation rules, and network submission logic for both task creation and editing workflows.
  *
- * @param {DbTask & { assignees?: { id: string }[] }} [initialData] - Optional initial task data for editing workflows.
- * @param {string} [mode] - Operation mode indicator (e.g., "edit").
- * @returns An object containing form state values, error states, and event handler functions.
+ * @param {DbTask & { assignees?: { id: string }[] }} [initialData] - Initial task data loaded for editing workflows.
+ * @param {string} [mode] - The current operating mode (e.g., "edit").
+ * @param {TaskStatus} [defaultStatus] - The fallback status applied when creating new tasks.
+ * @returns {Object} An object containing form state values, error states, and event handling functions.
  */
 export function useTaskForm(
   initialData?: DbTask & { assignees?: { id: string }[] },
   mode?: string,
+  defaultStatus?: TaskStatus,
 ) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -32,7 +34,7 @@ export function useTaskForm(
     title: initialData?.title ?? "",
     description: initialData?.description ?? "",
     priority: (initialData?.priority ?? "medium") as TaskPriority,
-    status: (initialData?.status ?? "todo") as TaskStatus,
+    status: (initialData?.status ?? defaultStatus ?? "todo") as TaskStatus,
     assignees: initialData?.assignees?.map((a) => a.id) ?? [],
     dueDate: dueDateObj ? dueDateObj.toISOString().split("T")[0] : todayString,
     dueTime: dueDateObj ? dueDateObj.toTimeString().slice(0, 5) : "23:59",

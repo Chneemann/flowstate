@@ -10,17 +10,19 @@ import { redirect } from "next/navigation";
 import TaskForm from "./TaskForm";
 import { not, eq } from "drizzle-orm";
 import { TaskService } from "@/services/task.service";
+import { TaskStatus } from "@/types/task";
 
 /**
  * Properties for the TaskPage component.
  *
  * @interface TaskPageProps
- * @property {Promise<{ task?: string; id?: string; }>} searchParams - A promise resolving to the search parameters containing mode and task ID.
+ * @property {Promise<{ task?: string; id?: string; status?: string; }>} searchParams - A promise resolving to the search parameters containing mode, task ID, and status.
  */
 interface TaskPageProps {
   searchParams: Promise<{
     task?: string;
     id?: string;
+    status?: string;
   }>;
 }
 
@@ -63,6 +65,7 @@ export default async function TaskPage({ searchParams }: TaskPageProps) {
         users={users}
         initialData={initialData}
         mode={params.task}
+        defaultStatus={params.status as TaskStatus}
       />
     </div>
   );
