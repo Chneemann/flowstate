@@ -41,22 +41,28 @@ export class TaskService {
   }
 
   /**
-   * Helper: Synchronizes assignees for a given task (replaces existing ones).
+   * Helper: Synchronizes the assigned users for a specified task within a transaction.
    *
    * @private
    * @async
+   * @param {any} tx - The Drizzle transaction instance.
    * @param {string} taskId - The unique identifier of the task.
-   * @param {string[]} [assignees] - Optional array of user IDs to assign.
+   * @param {string[]} [assignees] - An optional list of user IDs to assign.
    * @returns {Promise<void>}
    */
-  private static async syncAssignees(taskId: string, assignees?: string[]) {
-    await db
+  private static async syncAssignees(
+    tx: any,
+    taskId: string,
+    assignees?: string[],
+  ) {
+    await tx
       .delete(taskAssigneesTable)
       .where(eq(taskAssigneesTable.taskId, taskId));
 
     if (assignees && assignees.length > 0) {
-      const values = assignees.map((userId) => ({ taskId, userId }));
-      await db.insert(taskAssigneesTable).values(values);
+      const uniqueAssignees = [...new Set(assignees)];
+      const values = uniqueAssignees.map((userId) => ({ taskId, userId }));
+      await tx.insert(taskAssigneesTable).values(values);
     }
   }
 
@@ -226,66 +232,103 @@ export class TaskService {
   }
 
   /**
-   * Creates a new task and synchronizes its initial assignees.
+   * Creates a new task and synchronizes its assignees within a database transaction.
    *
    * @async
    * @param {string} userId - The unique identifier of the user creating the task.
-   * @param {TaskPayload} data - The task creation payload containing title, description, priority, status, due date, and optional assignees.
+   * @param {TaskPayload} data - The payload containing task details.
    * @returns {Promise<DbTask>} The newly created task record.
    */
   static async createTask(userId: string, data: TaskPayload) {
-    const [newTask] = await db
-      .insert(tasksTable)
-      .values({
-        title: data.title,
-        description: data.description ?? "",
-        priority: data.priority,
-        status: data.status,
-        dueDate: new Date(data.dueDate),
-        userId,
-      })
-      .returning();
+    return await db.transaction(async (tx) => {
+      const [newTask] = await tx
+        .insert(tasksTable)
+        .values({
+          title: data.title,
+          description: data.description ?? "",
+          priority: data.priority,
+          status: data.status,
+          dueDate: new Date(data.dueDate),
+          userId,
+        })
+        .returning();
 
-    await this.syncAssignees(newTask.id, data.assignees);
-    return newTask as DbTask;
+      await this.syncAssignees(tx, newTask.id, data.assignees);
+      return newTask as DbTask;
+    });
   }
 
   /**
    * Updates an existing task and synchronizes its assignees if the user is authorized.
    *
    * @async
-   * @param {string} taskId - The unique identifier of the task.
-   * @param {string} userId - The unique identifier of the user.
-   * @param {TaskPayload} data - The update payload containing new task properties.
-   * @returns {Promise<DbTask | null>} The updated task record or null if unauthorized.
+   * @param {string} taskId - The unique identifier of the task to update.
+   * @param {string} userId - The unique identifier of the user performing the update.
+   * @param {TaskPayload} data - The payload containing updated task details.
+   * @returns {Promise<DbTask | null>} The updated task record or null if unauthorized/not found.
    */
   static async updateTaskIfAuthorized(
     taskId: string,
     userId: string,
     data: TaskPayload,
   ) {
-    const [updatedTask] = await db
-      .update(tasksTable)
-      .set({
-        title: data.title,
-        description: data.description,
-        priority: data.priority,
-        status: data.status,
-        dueDate: new Date(data.dueDate),
-        updatedAt: new Date(),
-      })
+    return await db.transaction(async (tx) => {
+      const [updatedTask] = await tx
+        .update(tasksTable)
+        .set({
+          title: data.title,
+          description: data.description,
+          priority: data.priority,
+          status: data.status,
+          dueDate: new Date(data.dueDate),
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(tasksTable.id, taskId),
+            eq(tasksTable.userId, userId),
+            isNull(tasksTable.deletedAt),
+          ),
+        )
+        .returning();
+
+      if (!updatedTask) {
+        tx.rollback();
+        return null;
+      }
+
+      await this.syncAssignees(tx, taskId, data.assignees);
+      return updatedTask as DbTask;
+    });
+  }
+
+  /**
+   * Retrieves an editable task along with its assignees if the user owns it and it isn't deleted.
+   *
+   * @async
+   * @param {string} taskId - The unique identifier of the task.
+   * @param {string} userId - The unique identifier of the user.
+   * @returns {Promise<any | null>} The task record with assignees or null if not found.
+   */
+  static async getEditableTask(taskId: string, userId: string) {
+    const [task] = await db
+      .select()
+      .from(tasksTable)
       .where(
         and(
           eq(tasksTable.id, taskId),
           eq(tasksTable.userId, userId),
           isNull(tasksTable.deletedAt),
         ),
-      )
-      .returning();
+      );
 
-    if (!updatedTask) return null;
+    if (!task) return null;
 
-    await this.syncAssignees(taskId, data.assignees);
-    return updatedTask as DbTask;
+    const assignees = await db
+      .select({ id: taskAssigneesTable.userId })
+      .from(taskAssigneesTable)
+      .where(eq(taskAssigneesTable.taskId, taskId));
+
+    return { ...task, assignees };
   }
 }

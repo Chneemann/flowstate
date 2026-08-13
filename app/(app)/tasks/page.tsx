@@ -5,10 +5,11 @@
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { usersTable, tasksTable, taskAssigneesTable } from "@/db/schema";
+import { usersTable } from "@/db/schema";
 import { redirect } from "next/navigation";
 import TaskForm from "./TaskForm";
-import { not, eq, isNull, and } from "drizzle-orm";
+import { not, eq } from "drizzle-orm";
+import { TaskService } from "@/services/task.service";
 
 /**
  * Properties for the TaskPage component.
@@ -24,64 +25,43 @@ interface TaskPageProps {
 }
 
 /**
- * Renders the task creation or edit page, verifying user authentication,
- * fetching existing task data and assignees if in edit mode, loading available users,
- * and passing the context down to the task form component.
+ * Renders the task creation or editing page after checking user session authentication,
+ * validating edit mode parameters and UUID formats, fetching initial task data and assignable users,
+ * and loading the task form component.
  *
  * @async
- * @param {TaskPageProps} props - The component props.
+ * @param {TaskPageProps} props - The component props containing search parameters.
  * @returns {Promise<JSX.Element>} The rendered task page component.
  */
 export default async function TaskPage({ searchParams }: TaskPageProps) {
   const session = await auth();
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
+  if (!session?.user?.id) redirect("/login");
 
   const params = await searchParams;
-  const mode = params.task;
-  const taskId = params.id;
-
+  const UUID_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   let initialData = undefined;
 
-  if (mode === "edit" && taskId) {
-    const [task] = await db
-      .select()
-      .from(tasksTable)
-      .where(
-        and(
-          eq(tasksTable.id, taskId),
-          eq(tasksTable.userId, session.user.id),
-          isNull(tasksTable.deletedAt),
-        ),
-      );
+  if (params.task === "edit" && params.id) {
+    if (!UUID_REGEX.test(params.id)) redirect("/dashboard");
 
-    const assignedRows = await db
-      .select({ id: taskAssigneesTable.userId })
-      .from(taskAssigneesTable)
-      .where(eq(taskAssigneesTable.taskId, taskId));
+    initialData = await TaskService.getEditableTask(params.id, session.user.id);
 
-    initialData = {
-      ...task,
-      assignees: assignedRows,
-    };
+    if (!initialData) redirect("/dashboard");
   }
 
   const users = await db
-    .select({
-      id: usersTable.id,
-      email: usersTable.email,
-    })
+    .select({ id: usersTable.id, email: usersTable.email })
     .from(usersTable)
     .where(not(eq(usersTable.id, session.user.id)));
 
   return (
     <div className="mx-auto pb-12">
       <TaskForm
-        key={`${mode}-${taskId ?? "new"}`}
+        key={`${params.task}-${params.id ?? "new"}`}
         users={users}
         initialData={initialData}
-        mode={mode}
+        mode={params.task}
       />
     </div>
   );

@@ -75,6 +75,12 @@ export async function PATCH(request: Request) {
     const { userId, body, error } = await validateTaskRequest(request, true);
     if (error) return error;
 
+    const UUID_REGEX =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (body.id && !UUID_REGEX.test(body.id)) {
+      return new NextResponse("Invalid Task ID format", { status: 400 });
+    }
+
     const existingTask = await TaskService.verifyAccess(body!.id!, userId!);
     if (!existingTask) {
       return new NextResponse(
