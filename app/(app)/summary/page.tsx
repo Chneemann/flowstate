@@ -9,6 +9,8 @@ import { TaskService } from "@/services/task.service";
 import { COLUMNS } from "@/types/task";
 import SummaryHeader from "./sections/SummaryHeader";
 import SummaryKpiGrid from "./sections/SummaryKpiGrid";
+import SummaryStatusCard from "./sections/SummaryStatusCard";
+import SummaryPriorityCard from "./sections/SummaryPriorityCard";
 
 /**
  * Calculates comprehensive analytical metrics from the user's active task collection.
@@ -93,6 +95,17 @@ export default async function SummaryPage() {
         overdueTasks={analytics.overdueTasks}
         upcomingDueTasks={analytics.upcomingDueTasks}
       />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <SummaryStatusCard
+          totalTasks={analytics.totalTasks}
+          statusCounts={analytics.statusCounts}
+        />
+        <SummaryPriorityCard
+          totalTasks={analytics.totalTasks}
+          priorityCounts={analytics.priorityCounts}
+        />
+      </div>
     </div>
   );
 }
