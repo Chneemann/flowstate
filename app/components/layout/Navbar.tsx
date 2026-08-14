@@ -18,7 +18,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const navItems = [
   { name: "Summary", href: "/summary", icon: FileText },
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Add Task", href: "/tasks?task=new", icon: FilePenLine },
+  { name: "Add Task", href: "/tasks", icon: FilePenLine },
   { name: "Trash", href: "/trash", icon: Trash2 },
 ];
 
@@ -38,7 +38,7 @@ export default function Navbar() {
 
   const trashCount = data?.count || 0;
 
-  // Shared function to render navigation links to avoid code duplication
+  // Shared function to render navigation links
   const renderNavLinks = (isMobile = false) =>
     navItems.map((item) => {
       const Icon = item.icon;
@@ -50,13 +50,13 @@ export default function Navbar() {
       return (
         <Link
           key={item.href}
-          href={item.href}
+          href={item.href === "/tasks" ? "/tasks?task=new" : item.href}
           aria-current={isActive ? "page" : undefined}
           className={
             isMobile
               ? `flex flex-col items-center justify-center gap-1 transition-colors ${
                   isActive
-                    ? " cursor-default pointer-events-none"
+                    ? "cursor-default pointer-events-none"
                     : "text-foreground-muted hover:text-foreground"
                 }`
               : `flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
