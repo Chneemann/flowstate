@@ -3,6 +3,8 @@
  * @description Server component rendering the legal notice (imprint) page with a title header and back button navigation.
  */
 
+import { GoBackButton } from "../components/ui/buttons/GoBackButton";
+
 /**
  * Renders the imprint/legal notice page containing the main title and layout container.
  *
@@ -16,6 +18,7 @@ export default async function ImprintPage() {
         <h1 className="text-2xl font-bold text-foreground mb-1 tracking-tight">
           Legal Notice<span className="text-primary">.</span>
         </h1>
+        <GoBackButton />
         <div className="space-y-6 text-sm mt-3 text-foreground-muted leading-relaxed">
           {/* Information in accordance with § 5 DDG & § 18 MStV */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-xl space-y-3">
@@ -23,7 +26,7 @@ export default async function ImprintPage() {
               <span className="text-primary">//</span> Information Pursuant to §
               5 DDG
             </h2>
-            <div className="font-mono text-xs bg-background/60 p-4 rounded-xl border border-border text-foreground space-y-1">
+            <div className="font-mono text-xs bg-background/60 p-4 rounded-xl border border-border text-foreground">
               <p className="font-semibold">André Kempf</p>
               <p className="text-primary-hover">Full-Stack Web Developer</p>
               <p>Großschneidersweg 2a</p>

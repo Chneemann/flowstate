@@ -3,6 +3,8 @@
  * @description Server component rendering the privacy policy page with a title header and back button navigation.
  */
 
+import { GoBackButton } from "../components/ui/buttons/GoBackButton";
+
 /**
  * Renders the privacy policy page containing the main title and layout container alongside a back navigation button.
  *
@@ -16,6 +18,7 @@ export default async function PrivacyPage() {
         <h1 className="text-2xl font-bold text-foreground mb-1 tracking-tight">
           Privacy Policy<span className="text-primary">.</span>
         </h1>
+        <GoBackButton />
         <div className="space-y-6 text-sm mt-3 text-foreground-muted leading-relaxed">
           {/* Overview */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-xl space-y-4">

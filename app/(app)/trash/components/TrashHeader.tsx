@@ -5,8 +5,8 @@
 
 "use client";
 
-import { ArrowLeft, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { GoBackButton } from "@/app/components/ui/buttons/GoBackButton";
+import { Trash2 } from "lucide-react";
 
 /**
  * Renders the trash page header featuring title details, an indicator icon,
@@ -29,16 +29,7 @@ export default function TrashHeader() {
         </div>
       </div>
 
-      <Link
-        href="/dashboard"
-        className="inline-flex items-center gap-2 text-xs text-primary hover:text-primary-hover transition-colors mb-6 group"
-      >
-        <ArrowLeft
-          size={14}
-          className="group-hover:-translate-x-1 transition-transform"
-        />
-        Back to Dashboard
-      </Link>
+      <GoBackButton fallbackUrl="/dashboard" label="Dashboard" />
     </>
   );
 }
