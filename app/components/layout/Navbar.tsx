@@ -1,5 +1,5 @@
 /**
- * @file Navbar.tsx
+ * @file components/layout/Navbar.tsx
  * @description Client component providing responsive navigation for desktop and mobile views with active route indicators and trash count.
  */
 
@@ -9,7 +9,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, FileText, Trash2, FilePenLine } from "lucide-react";
 import useSWR from "swr";
+import MobileLegalMenu from "./MobileLegalMenu";
 
+/**
+ * Fetcher function for SWR to retrieve JSON data from the API endpoint.
+ *
+ * @param {string} url - The API endpoint URL to fetch.
+ * @returns {Promise<any>} The parsed JSON response data.
+ */
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 /**
@@ -38,7 +45,12 @@ export default function Navbar() {
 
   const trashCount = data?.count || 0;
 
-  // Shared function to render navigation links
+  /**
+   * Shared helper function to render navigation links for the desktop sidebar layout.
+   *
+   * @param {boolean} [isMobile=false] - Flag indicating whether the links are rendered for mobile layout.
+   * @returns {JSX.Element[]} An array of rendered navigation link elements.
+   */
   const renderNavLinks = (isMobile = false) =>
     navItems.map((item) => {
       const Icon = item.icon;
@@ -91,9 +103,39 @@ export default function Navbar() {
         {renderNavLinks(false)}
       </nav>
 
-      {/* Mobile Navigation */}
-      <nav className="md:hidden h-16 border-t border-border backdrop-blur-xl px-6 flex items-center justify-around fixed bottom-0 left-0 right-0 z-50 bg-background-muted">
-        {renderNavLinks(true)}
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden h-16 border-t border-border backdrop-blur-xl px-4 flex items-center justify-around fixed bottom-0 left-0 right-0 z-50 bg-background-muted">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isTrash = item.href === "/trash";
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/" && pathname.startsWith(item.href));
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href === "/tasks" ? "/tasks?task=new" : item.href}
+              className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+                isActive
+                  ? "text-primary font-semibold"
+                  : "text-foreground-muted hover:text-foreground"
+              }`}
+            >
+              <div className="relative inline-flex items-center">
+                <Icon className="w-5 h-5" />
+                {isTrash && trashCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white shadow-sm ring-1 ring-background">
+                    {trashCount}
+                  </span>
+                )}
+              </div>
+              <span className="text-xs font-medium">{item.name}</span>
+            </Link>
+          );
+        })}
+
+        <MobileLegalMenu />
       </nav>
     </>
   );
