@@ -6,8 +6,10 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
+
+const SEARCHABLE_ROUTES = ["/dashboard", "/trash"];
 
 /**
  * Properties for the SearchBar component.
@@ -27,7 +29,7 @@ interface SearchBarProps {
  * Renders a debounced search bar input that syncs its local state with the URL's "search" query parameter.
  *
  * @param {SearchBarProps} props - The component props.
- * @returns {JSX.Element} The rendered search bar component.
+ * @returns {JSX.Element | null} The rendered search bar component or null if the current route is not searchable.
  */
 export default function SearchBar({
   placeholder = "Search...",
@@ -35,14 +37,27 @@ export default function SearchBar({
   autoFocus = false,
 }: SearchBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("search") || "";
 
+  // Check whether the current route supports the search
+  const isSearchableRoute = SEARCHABLE_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
+  const searchQuery = searchParams.get("search") || "";
   const [localValue, setLocalValue] = useState(searchQuery);
   const [isPending, startTransition] = useTransition();
 
+  // Synchronize state when the path or URL changes
+  useEffect(() => {
+    setLocalValue(searchQuery);
+  }, [searchQuery, pathname]);
+
   // Debounced URL Update
   useEffect(() => {
+    if (!isSearchableRoute) return;
+
     const timer = setTimeout(() => {
       if (localValue !== searchQuery) {
         const params = new URLSearchParams(searchParams.toString());
@@ -59,7 +74,18 @@ export default function SearchBar({
     }, debounceMs);
 
     return () => clearTimeout(timer);
-  }, [localValue, searchQuery, searchParams, debounceMs, router]);
+  }, [
+    localValue,
+    searchQuery,
+    searchParams,
+    debounceMs,
+    router,
+    isSearchableRoute,
+  ]);
+
+  if (!isSearchableRoute) {
+    return null;
+  }
 
   /**
    * Resets the local search input value to an empty string.
