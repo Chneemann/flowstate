@@ -6,7 +6,16 @@
 import { db } from "@/db";
 import { tasksTable, taskAssigneesTable, usersTable } from "@/db/schema";
 import { DbTask, TaskPayload, TaskStatus } from "@/types/task";
-import { and, eq, or, exists, isNotNull, isNull, inArray } from "drizzle-orm";
+import {
+  and,
+  eq,
+  or,
+  exists,
+  isNotNull,
+  isNull,
+  inArray,
+  ilike,
+} from "drizzle-orm";
 
 /**
  * Service class for handling task-related operations, access control, and database interactions.
@@ -120,13 +129,21 @@ export class TaskService {
   }
 
   /**
-   * Retrieves all active (non-deleted) tasks for a specific user.
+   * Finds all active (non-deleted) tasks for a specific user, matching optionally provided search criteria.
    *
    * @async
    * @param {string} userId - The unique identifier of the user.
-   * @returns {Promise<Array<{ task: DbTask; user: any }>>} An array of tasks joined with their creator users.
+   * @param {string} [searchQuery] - An optional search string to filter task titles or descriptions.
+   * @returns {Promise<Array<{ task: DbTask; user: any }>>} An array of task records mapped with their respective creators.
    */
-  static async findActiveTasksForUser(userId: string) {
+  static async findActiveTasksForUser(userId: string, searchQuery?: string) {
+    const searchFilter = searchQuery
+      ? or(
+          ilike(tasksTable.title, `%${searchQuery}%`),
+          ilike(tasksTable.description, `%${searchQuery}%`),
+        )
+      : undefined;
+
     return await db
       .select({ task: tasksTable, user: usersTable })
       .from(tasksTable)
@@ -135,6 +152,7 @@ export class TaskService {
         and(
           isNull(tasksTable.deletedAt),
           this.userHasAccessCondition(userId, tasksTable.id),
+          searchFilter,
         ),
       );
   }
@@ -156,19 +174,31 @@ export class TaskService {
   }
 
   /**
-   * Retrieves all soft-deleted tasks in the trash for a specific user.
+   * Finds all soft-deleted tasks in the trash created by a specific user, matching optionally provided search criteria.
    *
    * @async
    * @param {string} userId - The unique identifier of the user.
-   * @returns {Promise<Array<{ task: DbTask; user: any }>>} An array of deleted tasks joined with users.
+   * @param {string} [searchQuery] - An optional search string to filter task titles or descriptions.
+   * @returns {Promise<Array<{ task: DbTask; user: any }>>} An array of soft-deleted task records mapped with their respective creators.
    */
-  static async findTrashTasksForUser(userId: string) {
+  static async findTrashTasksForUser(userId: string, searchQuery?: string) {
+    const searchFilter = searchQuery
+      ? or(
+          ilike(tasksTable.title, `%${searchQuery}%`),
+          ilike(tasksTable.description, `%${searchQuery}%`),
+        )
+      : undefined;
+
     return await db
       .select({ task: tasksTable, user: usersTable })
       .from(tasksTable)
       .innerJoin(usersTable, eq(tasksTable.userId, usersTable.id))
       .where(
-        and(eq(tasksTable.userId, userId), isNotNull(tasksTable.deletedAt)),
+        and(
+          eq(tasksTable.userId, userId),
+          isNotNull(tasksTable.deletedAt),
+          searchFilter,
+        ),
       );
   }
 
