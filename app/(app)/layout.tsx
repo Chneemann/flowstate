@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import Sidebar from "@/app/components/layout/Sidebar";
 import Header from "@/app/components/layout/Header";
 import Navbar from "@/app/components/layout/Navbar";
-import ErrorToast from "../components/ErrorToast";
+import ErrorToast from "../components/ui/ErrorToast";
 import Footer from "@/app/components/layout/Footer";
 
 /**

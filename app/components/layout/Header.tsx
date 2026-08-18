@@ -4,7 +4,7 @@
  */
 
 import BrandLogo from "./BrandLogo";
-import SearchBar from "./SearchBar";
+import SearchBar from "../ui/SearchBar";
 import UserBadge from "./UserBadge";
 
 export default function Header() {
