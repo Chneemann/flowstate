@@ -7,7 +7,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Trash2, FilePenLine } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileText,
+  Trash2,
+  FilePenLine,
+  Users,
+} from "lucide-react";
 import useSWR from "swr";
 import MobileLegalMenu from "./MobileLegalMenu";
 
@@ -26,6 +32,7 @@ const navItems = [
   { name: "Summary", href: "/summary", icon: FileText },
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Add Task", href: "/tasks", icon: FilePenLine },
+  { name: "Member", href: "/member", icon: Users },
   { name: "Trash", href: "/trash", icon: Trash2 },
 ];
 

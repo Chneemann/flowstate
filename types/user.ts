@@ -4,6 +4,7 @@
  */
 
 import { type User as DbUser } from "@/db/schema";
+import { UserService } from "@/services/user.service";
 
 // ==========================================
 // Types
@@ -11,6 +12,9 @@ import { type User as DbUser } from "@/db/schema";
 
 export type { DbUser };
 export type UserColor = (typeof AVAILABLE_COLORS)[number];
+export type UserListItem = Awaited<
+  ReturnType<typeof UserService.findAllUsers>
+>[number];
 
 // ==========================================
 // UI Configurations
