@@ -8,16 +8,21 @@
 import { Task, PRIORITY_CONFIG } from "@/types/task";
 import { Calendar } from "lucide-react";
 import TaskActionButton from "./components/TaskActionButton";
+import HighlightText from "@/app/components/ui/HighlightText";
+import { useSearchParams } from "next/navigation";
 
 /**
- * Renders a list of deleted tasks stored in the trash, featuring priority badges,
- * deletion dates, and action controls for permanent deletion or restoration.
+ * Renders a list of deleted tasks stored in the trash with search term highlighting,
+ * featuring priority badges, deletion dates, and action controls for permanent deletion or restoration.
  *
  * @param {Object} props - The component props.
  * @param {Task[]} props.tasks - The array of deleted tasks to render.
  * @returns {JSX.Element} The rendered trash list component or an empty state placeholder.
  */
 export default function TrashList({ tasks }: { tasks: Task[] }) {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+
   return (
     <div className="grid gap-4">
       {tasks.length === 0 ? (
@@ -54,7 +59,7 @@ export default function TrashList({ tasks }: { tasks: Task[] }) {
               <div className="flex flex-col gap-2 pl-2 max-w-2xl">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold text-base group-hover:text-primary transition-colors line-clamp-1">
-                    {task.title}
+                    <HighlightText text={task.title} query={searchQuery} />
                   </h3>
 
                   <span
@@ -66,7 +71,10 @@ export default function TrashList({ tasks }: { tasks: Task[] }) {
 
                 {task.description && (
                   <p className="text-xs text-foreground-muted line-clamp-1">
-                    {task.description}
+                    <HighlightText
+                      text={task.description}
+                      query={searchQuery}
+                    />
                   </p>
                 )}
 

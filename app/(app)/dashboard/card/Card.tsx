@@ -11,6 +11,8 @@ import CardActions from "./CardActions";
 import CardAvatars from "./CardAvatars";
 import CardDueDate from "./CardDueDate";
 import CardPriority from "./CardPriority";
+import HighlightText from "@/app/components/ui/HighlightText";
+import { useSearchParams } from "next/navigation";
 
 /**
  * Properties for the Card component.
@@ -29,8 +31,8 @@ export interface CardProps {
 }
 
 /**
- * Renders an interactive card container handling drag-and-drop actions, loading states,
- * and assembling modular sub-components for priorities, due dates, avatars, and actions.
+ * Renders an interactive card container supporting search match highlighting, drag-and-drop actions,
+ * loading states, and modular sub-components for priorities, due dates, avatars, and actions.
  *
  * @param {CardProps} props - The component props containing the task object, updating status flag, and status change handler.
  * @returns {JSX.Element} The rendered card component.
@@ -41,6 +43,9 @@ export default function Card({
   onStatusChange,
   onDelete,
 }: CardProps) {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+
   /**
    * Initiates the drag action on a task card if not currently updating, storing its ID and status payload.
    *
@@ -87,14 +92,14 @@ export default function Card({
       {/* --- Card Header --- */}
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-semibold leading-snug group-hover/card:text-primary transition-colors line-clamp-2">
-          {task.title}
+          <HighlightText text={task.title} query={searchQuery} />
         </h3>
         <CardPriority priority={task.priority} />
       </div>
 
       {/* Card Description */}
       <p className="text-sm leading-relaxed text-foreground-muted line-clamp-3">
-        {task.description}
+        <HighlightText text={task.description} query={searchQuery} />
       </p>
 
       {/* --- Card Footer --- */}
