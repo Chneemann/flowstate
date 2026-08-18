@@ -13,6 +13,7 @@ import {
 } from "@/utils/user";
 import { Mail } from "lucide-react";
 import { UserListItem } from "@/types/user";
+import Link from "next/link";
 
 /**
  * Properties for the MemberItem component.
@@ -32,7 +33,10 @@ interface MemberItemProps {
  */
 export default function MemberItem({ member }: MemberItemProps) {
   return (
-    <div className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-card/40 border border-border/80 rounded-2xl hover:border-primary/40 hover:bg-card/70 transition-all duration-200 shadow-sm overflow-hidden">
+    <Link
+      href={`/member/${member.id}`}
+      className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-card/40 border border-border/80 rounded-2xl hover:border-primary/40 hover:bg-card/70 transition-all duration-200 shadow-sm overflow-hidden"
+    >
       {/* Dynamic colored accent stripe */}
       <div
         className={`absolute left-0 top-0 bottom-0 w-1 transition-colors ${
@@ -90,6 +94,6 @@ export default function MemberItem({ member }: MemberItemProps) {
           {formatTimeAgo(member.lastLogin)}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }
