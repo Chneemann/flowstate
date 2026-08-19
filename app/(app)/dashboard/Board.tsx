@@ -98,7 +98,7 @@ export default function Board({ tasks }: { tasks: Task[] }) {
       <Header onTaskDelete={deleteTask} />
 
       {/* Columns Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 items-start">
         {COLUMNS.map((col) => {
           const columnTasks = tasks.filter((t) => t.status === col.id);
           return (

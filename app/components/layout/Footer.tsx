@@ -18,7 +18,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-background text-xs px-3 py-3 border-t border-border">
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+      <div className="mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
         {/* Left: Copyright Notice */}
         <p className="order-1 md:order-1 text-foreground-muted">
           {COPYRIGHT_TEXT(currentYear)}

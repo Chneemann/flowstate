@@ -59,7 +59,7 @@ export default async function TaskPage({ searchParams }: TaskPageProps) {
     .where(not(eq(usersTable.id, session.user.id)));
 
   return (
-    <div className="mx-auto pb-12">
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
       <TaskForm
         key={`${params.task}-${params.id ?? "new"}`}
         users={users}

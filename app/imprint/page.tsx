@@ -14,7 +14,7 @@ import { GoBackButton } from "../components/ui/buttons/GoBackButton";
 export default async function ImprintPage() {
   return (
     <section className="flex-1 overflow-y-auto w-full">
-      <div className="relative p-6 max-w-5xl mx-auto">
+      <div className="relative p-6 max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold text-foreground mb-1 tracking-tight">
           Legal Notice<span className="text-primary">.</span>
         </h1>
