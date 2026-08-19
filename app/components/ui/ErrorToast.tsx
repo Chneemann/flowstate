@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { AlertCircle, X } from "lucide-react";
 
@@ -19,6 +19,7 @@ const AUTO_DISMISS_TIME = 5000;
  */
 export default function ErrorToast() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
   const error = searchParams.get("error");
 
@@ -31,12 +32,19 @@ export default function ErrorToast() {
   const animFrameRef = useRef<number | null>(null);
 
   /**
-   * Dismisses the toast notification and cleans up URL parameters.
+   * Dismisses the toast notification and cleans up the URL error parameter while preserving the current pathname.
    */
   const dismissToast = useCallback(() => {
     setIsVisible(false);
-    router.replace("/dashboard", { scroll: false });
-  }, [router]);
+
+    // Clean up query parameters without forcing a hard redirect to dashboard
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("error");
+    const query = params.toString();
+    const newPath = query ? `${pathname}?${query}` : pathname;
+
+    router.replace(newPath, { scroll: false });
+  }, [router, pathname, searchParams]);
 
   // Show a toast message when an error occurs and reset the timer
   useEffect(() => {
@@ -90,12 +98,39 @@ export default function ErrorToast() {
 
   if (!isVisible || !error) return null;
 
-  const message =
-    error === "unauthorized_edit"
-      ? "You cannot edit tasks that belong to others or are in the trash."
-      : error === "task_not_found"
-        ? "The requested task does not exist or has been deleted."
-        : "An unexpected error occurred.";
+  /**
+   * Resolves the user-facing error title and detailed message based on the error query parameter.
+   *
+   * @returns {{ title: string; message: string }} An object containing the toast header title and body message.
+   */
+  const getErrorInfo = (): { title: string; message: string } => {
+    switch (error) {
+      case "unauthorized_edit":
+        return {
+          title: "Access Denied",
+          message:
+            "You cannot edit tasks that belong to others or are in the trash.",
+        };
+      case "task_not_found":
+        return {
+          title: "Task Not Found",
+          message: "The requested task does not exist or has been deleted.",
+        };
+      case "member_not_found":
+        return {
+          title: "Member Not Found",
+          message:
+            "The requested team member does not exist or has been removed.",
+        };
+      default:
+        return {
+          title: "Error",
+          message: "An unexpected error occurred.",
+        };
+    }
+  };
+
+  const { title, message } = getErrorInfo();
 
   return (
     <div
@@ -111,7 +146,7 @@ export default function ErrorToast() {
         <div className="flex flex-col flex-1">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold tracking-wider uppercase text-destructive text-sm">
-              Access Denied
+              {title}
             </h4>
             <button
               onClick={dismissToast}

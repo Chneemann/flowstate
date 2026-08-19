@@ -1,38 +1,40 @@
 /**
  * @file member/[id]/page.tsx
- * @description Server component rendering the detailed profile page for a specific member by fetching their user profile data.
+ * @description Server component rendering the detailed profile page for a specific member by validating the ID format and fetching user profile data.
  */
 
 import { UserService } from "@/services/user.service";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import MemberHeader from "../MemberHeader";
 import MemberProfileCard from "./MemberProfileCard";
 
 /**
- * Properties for the MemberDetailPage component.
- *
- * @interface MemberDetailPageProps
- * @property {Promise<{ id: string }>} params - Promise containing route context parameters with the target member ID.
- */
-interface MemberDetailPageProps {
-  params: Promise<{ id: string }>;
-}
-
-/**
- * Renders the member detail page by resolving the route parameter, fetching the user profile by ID,
- * and displaying their header and profile card or triggering a 404 page if the member is not found.
+ * Renders the member detail page by resolving route parameters, validating the member ID syntax,
+ * fetching profile data, and displaying the header and profile card or redirecting with an error parameter if not found.
  *
  * @async
- * @param {MemberDetailPageProps} props - The component props.
+ * @param {Object} props - The component props.
+ * @param {Promise<{ id: string }>} props.params - Promise containing route context parameters with the target member ID.
  * @returns {Promise<JSX.Element>} The rendered member detail page component.
  */
 export default async function MemberDetailPage({
   params,
-}: MemberDetailPageProps) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
+  const UUID_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+  if (!UUID_REGEX.test(id)) {
+    redirect("/member?error=member_not_found");
+  }
+
   const user = await UserService.findProfileById(id);
 
-  if (!user) notFound();
+  if (!user) {
+    redirect("/member?error=member_not_found");
+  }
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
