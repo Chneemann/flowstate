@@ -10,6 +10,7 @@ import {
   getInitials,
   getStatusColor,
   formatTimeAgo,
+  capitalize,
 } from "@/utils/user";
 import { Mail } from "lucide-react";
 import { UserListItem } from "@/types/user";
@@ -61,7 +62,7 @@ export default function MemberItem({ member }: MemberItemProps) {
               {getFullName(member.firstName, member.lastName)}
             </h3>
             <span className="text-[10px] px-2 py-0.5 rounded-md font-semibold border border-border/60 bg-card/60 text-foreground-muted">
-              Member
+              {capitalize(member.role)}
             </span>
           </div>
 

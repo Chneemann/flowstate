@@ -16,7 +16,7 @@ export class UserService {
    *
    * @async
    * @param {string} userId - The unique identifier of the user.
-   * @returns {Promise<{ id: string; firstName: string; lastName: string; email: string; color: string; isOnline: boolean; lastLogin: Date } | null>} The user profile data or null if not found.
+   * @returns {Promise<{ id: string; firstName: string; lastName: string; email: string; role: string; color: string; isOnline: boolean; lastLogin: Date } | null>} The user profile data or null if not found.
    */
   static async findProfileById(userId: string) {
     const [user] = await db
@@ -25,6 +25,7 @@ export class UserService {
         firstName: usersTable.firstName,
         lastName: usersTable.lastName,
         email: usersTable.email,
+        role: usersTable.role,
         color: usersTable.color,
         isOnline: usersTable.isOnline,
         lastLogin: usersTable.lastLogin,
@@ -39,7 +40,7 @@ export class UserService {
    * Retrieves a list of all users sorted by their last login date in descending order, placing null values last.
    *
    * @async
-   * @returns {Promise<Array<{ id: string; firstName: string; lastName: string; email: string; color: string; lastLogin: Date; isOnline: boolean }>>} An array of user list items.
+   * @returns {Promise<Array<{ id: string; firstName: string; lastName: string; email: string; role: string; color: string; lastLogin: Date; isOnline: boolean }>>} An array of user list items.
    */
   static async findAllUsers() {
     return await db
@@ -48,6 +49,7 @@ export class UserService {
         firstName: usersTable.firstName,
         lastName: usersTable.lastName,
         email: usersTable.email,
+        role: usersTable.role,
         color: usersTable.color,
         lastLogin: usersTable.lastLogin,
         isOnline: usersTable.isOnline,

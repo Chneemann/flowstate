@@ -4,6 +4,17 @@
  */
 
 /**
+ * Capitalizes the first letter of a given string.
+ *
+ * @param {string} [str] - The string to capitalize.
+ * @returns {string} The capitalized string or an empty string if undefined/empty.
+ */
+export function capitalize(str?: string): string {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+/**
  * Generates the full name with properly capitalized first and last names.
  *
  * @param {string} [firstName] - The user's first name.
@@ -11,10 +22,9 @@
  * @returns {string} The formatted full name.
  */
 export function getFullName(firstName?: string, lastName?: string): string {
-  const format = (str?: string) =>
-    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
-
-  return `${format(firstName)} ${format(lastName)}`.trim();
+  const formattedFirst = capitalize(firstName);
+  const formattedLast = capitalize(lastName);
+  return `${formattedFirst} ${formattedLast}`.trim();
 }
 
 /**

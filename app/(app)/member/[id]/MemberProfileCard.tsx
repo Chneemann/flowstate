@@ -5,7 +5,12 @@
 
 "use client";
 
-import { getFullName, getInitials, formatTimeAgo } from "@/utils/user";
+import {
+  getFullName,
+  getInitials,
+  formatTimeAgo,
+  capitalize,
+} from "@/utils/user";
 import { Mail, Clock, ShieldCheck } from "lucide-react";
 import { UserListItem } from "@/types/user";
 
@@ -36,7 +41,7 @@ export default function MemberProfileCard({ member }: MemberProfileCardProps) {
     },
     {
       label: "Account Status",
-      value: "Active - Member",
+      value: `Active - ${capitalize(member.role)}`,
       icon: ShieldCheck,
       color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
     },
