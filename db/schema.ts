@@ -36,6 +36,11 @@ export const taskPriorityEnum = pgEnum("task_priority", [
   "high",
 ]);
 
+/**
+ * Enumeration representing access control roles assigned to application users.
+ */
+export const userRoleEnum = pgEnum("user_role", ["admin", "member", "guest"]);
+
 // ==========================================
 // Tables
 // ==========================================
@@ -49,6 +54,7 @@ export const usersTable = pgTable("users", {
   password: text("password").notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
+  role: text("role").default("member").notNull(),
   color: text("color").default("bg-indigo-500").notNull(),
   lastLogin: timestamp("last_login"),
   isOnline: boolean("is_online").default(false).notNull(),
