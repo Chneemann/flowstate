@@ -1,6 +1,6 @@
 /**
  * @file (auth)/login/page.tsx
- * @description Client component providing a user login interface with NextAuth credentials authentication.
+ * @description Client component providing a user login interface with NextAuth credentials authentication and guest login capabilities.
  */
 
 "use client";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getGuestCredentials } from "@/services/auth.service";
 
 /**
  * Renders the login page containing the authentication form, error handling,
@@ -86,21 +87,35 @@ export default function LoginPage() {
   };
 
   /**
-   * Handles quick guest login using environment variables.
+   * Handles quick guest login securely via Server Action.
    *
    * @async
    * @returns {Promise<void>}
    */
   const handleGuestLogin = async () => {
-    const guestEmail = process.env.NEXT_PUBLIC_GUEST_EMAIL;
-    const guestPassword = process.env.NEXT_PUBLIC_GUEST_PASSWORD;
+    setError(null);
+    setLoadingType("guest");
 
-    if (!guestEmail || !guestPassword) {
-      setError("Guest login is not configured.");
-      return;
+    try {
+      const result = await getGuestCredentials();
+
+      if ("error" in result && result.error) {
+        setError(result.error);
+        setLoadingType(null);
+        return;
+      }
+
+      if (!result.email || !result.password) {
+        setError("Guest login is not configured properly.");
+        setLoadingType(null);
+        return;
+      }
+
+      await handleSignIn(result.email, result.password, "guest");
+    } catch (err) {
+      setError("Failed to initialize guest login.");
+      setLoadingType(null);
     }
-
-    await handleSignIn(guestEmail, guestPassword, "guest");
   };
 
   return (
