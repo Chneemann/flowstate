@@ -1,5 +1,5 @@
 /**
- * @file LoginPage.tsx
+ * @file (auth)/login/page.tsx
  * @description Client component providing a user login interface with NextAuth credentials authentication.
  */
 
@@ -19,28 +19,30 @@ import Link from "next/link";
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loadingType, setLoadingType] = useState<
+    "credentials" | "guest" | null
+  >(null);
 
   /**
-   * Handles the submission of the login form, validates credentials via NextAuth,
-   * and manages loading/error states or redirects upon success.
+   * Universal sign-in handler for both manual credentials and guest login.
    *
    * @async
-   * @param {React.SubmitEvent<HTMLFormElement>} e - The form submission event.
+   * @param {string} email - The user email.
+   * @param {string} password - The user password.
+   * @param {"credentials" | "guest"} type - The login method type for specific loading states.
    * @returns {Promise<void>}
    */
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSignIn = async (
+    email: string,
+    password: string,
+    type: "credentials" | "guest",
+  ) => {
     setError(null);
-    setLoading(true);
+    setLoadingType(type);
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
     const defaultErrorMessage = "An unexpected error has occurred.";
 
     try {
-      // Attempt to sign in using Auth.js credentials provider
       const res = await signIn("credentials", {
         email,
         password,
@@ -48,33 +50,63 @@ export default function LoginPage() {
       });
 
       if (res?.error) {
-        // Handle specific authentication errors
         if (res.error === "CredentialsSignin") {
           setError("Incorrect email address or password.");
         } else {
           setError(defaultErrorMessage);
         }
       } else {
-        // Redirect user
         router.push("/summary");
         return;
       }
     } catch (err: any) {
-      // Handle network or connection errors vs unexpected errors
       if (err?.message?.includes("fetch") || err?.name === "TypeError") {
         setError("Server error: API endpoint not available");
       } else {
         setError(defaultErrorMessage);
       }
     } finally {
-      setLoading(false);
+      setLoadingType(null);
     }
+  };
+
+  /**
+   * Handles regular form submission.
+   *
+   * @async
+   * @param {React.SubmitEvent<HTMLFormElement>} e - The form submission event.
+   * @returns {Promise<void>}
+   */
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    await handleSignIn(email, password, "credentials");
+  };
+
+  /**
+   * Handles quick guest login using environment variables.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
+  const handleGuestLogin = async () => {
+    const guestEmail = process.env.NEXT_PUBLIC_GUEST_EMAIL;
+    const guestPassword = process.env.NEXT_PUBLIC_GUEST_PASSWORD;
+
+    if (!guestEmail || !guestPassword) {
+      setError("Guest login is not configured.");
+      return;
+    }
+
+    await handleSignIn(guestEmail, guestPassword, "guest");
   };
 
   return (
     <div className="flex h-dvh w-full items-center justify-center">
       {/* Login Card Container */}
-      <div className="w-full max-w-sm p-6 space-y-6 border border-border rounded-xl bg-card backdrop-blur-md">
+      <div className="w-full max-w-sm p-6 space-y-4 border border-border rounded-xl bg-card backdrop-blur-md">
         {/* Header Section */}
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold tracking-tight">Flowstate Login</h1>
@@ -101,7 +133,6 @@ export default function LoginPage() {
               name="email"
               type="email"
               placeholder="name@example.com"
-              defaultValue="test@flowstate.io"
               required
               className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
             />
@@ -114,8 +145,7 @@ export default function LoginPage() {
             <input
               name="password"
               type="password"
-              placeholder="••••••••"
-              defaultValue="password"
+              placeholder="•••••••••••••"
               required
               className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
             />
@@ -123,12 +153,33 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loadingType !== null}
             className="w-full py-2 text-sm font-medium rounded-lg bg-foreground text-background hover:opacity-70 transition-opacity disabled:opacity-20 cursor-pointer disabled:cursor-auto"
           >
-            {loading ? "Logging in..." : "Sign In"}
+            {loadingType === "credentials" ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
+        {/* Divider */}
+        <div className="relative flex items-center">
+          <div className="grow border-t border-border"></div>
+          <span className="shrink mx-4 text-xs text-foreground-muted uppercase">
+            or
+          </span>
+          <div className="grow border-t border-border"></div>
+        </div>
+
+        {/* Guest Login Button */}
+        <button
+          type="button"
+          disabled={loadingType !== null}
+          onClick={handleGuestLogin}
+          className="w-full py-2 text-sm font-medium rounded-lg bg-background hover:opacity-70 transition-opacity disabled:opacity-20 cursor-pointer disabled:cursor-auto border border-border"
+        >
+          {loadingType === "guest"
+            ? "Signing in as Guest..."
+            : "Sign in as Guest"}
+        </button>
 
         {/* Registration Link Footer */}
         <div className="text-center text-xs text-foreground-muted">
