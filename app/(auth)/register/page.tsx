@@ -1,6 +1,6 @@
 /**
- * @file RegisterPage.tsx
- * @description Client component providing a user registration interface for creating a new account.
+ * @file (auth)/register/page.tsx
+ * @description Client component providing a user registration interface utilizing the auth service.
  */
 
 "use client";
@@ -8,10 +8,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { registerUser } from "@/services/auth.service";
 
 /**
  * Renders the registration page featuring a sign-up form, error feedback,
- * and routing logic to the login page upon successful account creation.
+ * and routing logic to the summary view upon successful account creation.
  *
  * @returns {JSX.Element} The rendered registration page component.
  */
@@ -21,12 +22,11 @@ export default function RegisterPage() {
   const router = useRouter();
 
   /**
-   * Handles the submission of the registration form, sends user data to the API,
-   * creates the account, auto-logins the user, and redirects to the main view on success.
+   * Handles user registration form submission, validates form data via auth service,
+   * and navigates to summary page on successful registration.
    *
    * @async
    * @param {React.SubmitEvent<HTMLFormElement>} event - The form submission event.
-   * @returns {Promise<void>}
    */
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,61 +34,21 @@ export default function RegisterPage() {
     setLoading(true);
 
     const formData = new FormData(event.currentTarget);
-    const firstName = formData.get("firstName");
-    const lastName = formData.get("lastName");
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const confirmPassword = formData.get("confirmPassword");
+    const payload = Object.fromEntries(formData.entries());
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    const result = await registerUser(payload);
+
+    if (result.error) {
+      setError(result.error);
       setLoading(false);
-      return;
-    }
-
-    try {
-      // Send registration request to the API
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-          confirmPassword,
-        }),
-      });
-
-      // Ensure the response is valid JSON before parsing
-      const contentType = response.headers.get("content-type");
-      let data;
-      if (contentType && contentType.includes("application/json")) {
-        data = await response.json();
-      } else {
-        throw new Error("Server error: API endpoint not available");
-      }
-
-      // Handle non-successful status codes
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong.");
-      }
-
-      // Redirect user
+    } else {
       router.push("/summary");
-      return;
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
   }
 
   return (
     <div className="flex h-dvh w-full items-center justify-center">
-      {/* Login Card Container */}
       <div className="w-full max-w-sm p-6 space-y-6 border border-border rounded-xl bg-card backdrop-blur-md">
-        {/* Header Section */}
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold tracking-tight">
             Create an Account
@@ -98,7 +58,6 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Error Notification Banner */}
         {error && (
           <div
             className="p-3 text-xs font-medium text-destructive bg-destructive-bg border border-destructive-border rounded-lg text-center"
@@ -108,7 +67,6 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {/* Credentials Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
             <input
@@ -156,7 +114,6 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        {/* Back Link Footer */}
         <div className="text-center text-xs text-foreground-muted">
           Already have an account?{" "}
           <Link href="/login" className="text-foreground hover:underline">

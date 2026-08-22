@@ -1,15 +1,14 @@
 /**
  * @file (auth)/login/page.tsx
- * @description Client component providing a user login interface with NextAuth credentials authentication and guest login capabilities.
+ * @description Client component providing a user login interface utilizing the auth service.
  */
 
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getGuestCredentials } from "@/services/auth.service";
+import { getGuestCredentials, loginUser } from "@/services/auth.service";
 
 /**
  * Renders the login page containing the authentication form, error handling,
@@ -25,13 +24,13 @@ export default function LoginPage() {
   >(null);
 
   /**
-   * Universal sign-in handler for both manual credentials and guest login.
+   * Performs user authentication via email and password using the auth service.
+   * Redirects to the summary page upon success or sets an error message on failure.
    *
    * @async
-   * @param {string} email - The user email.
-   * @param {string} password - The user password.
-   * @param {"credentials" | "guest"} type - The login method type for specific loading states.
-   * @returns {Promise<void>}
+   * @param {string} email - The email address for login.
+   * @param {string} password - The account password.
+   * @param {"credentials" | "guest"} type - The authentication trigger source type.
    */
   const handleSignIn = async (
     email: string,
@@ -41,42 +40,21 @@ export default function LoginPage() {
     setError(null);
     setLoadingType(type);
 
-    const defaultErrorMessage = "An unexpected error has occurred.";
+    const result = await loginUser(email, password);
 
-    try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (res?.error) {
-        if (res.error === "CredentialsSignin") {
-          setError("Incorrect email address or password.");
-        } else {
-          setError(defaultErrorMessage);
-        }
-      } else {
-        router.push("/summary");
-        return;
-      }
-    } catch (err: any) {
-      if (err?.message?.includes("fetch") || err?.name === "TypeError") {
-        setError("Server error: API endpoint not available");
-      } else {
-        setError(defaultErrorMessage);
-      }
-    } finally {
+    if (result.error) {
+      setError(result.error);
       setLoadingType(null);
+    } else {
+      router.push("/summary");
     }
   };
 
   /**
-   * Handles regular form submission.
+   * Handles traditional credential-based form submissions.
    *
    * @async
    * @param {React.SubmitEvent<HTMLFormElement>} e - The form submission event.
-   * @returns {Promise<void>}
    */
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,48 +65,33 @@ export default function LoginPage() {
   };
 
   /**
-   * Handles quick guest login securely via Server Action.
+   * Fetches guest user credentials and triggers guest authentication.
    *
    * @async
-   * @returns {Promise<void>}
    */
   const handleGuestLogin = async () => {
     setError(null);
     setLoadingType("guest");
 
-    try {
-      const result = await getGuestCredentials();
+    const result = await getGuestCredentials();
 
-      if ("error" in result && result.error) {
-        setError(result.error);
-        setLoadingType(null);
-        return;
-      }
-
-      if (!result.email || !result.password) {
-        setError("Guest login is not configured properly.");
-        setLoadingType(null);
-        return;
-      }
-
-      await handleSignIn(result.email, result.password, "guest");
-    } catch (err) {
-      setError("Failed to initialize guest login.");
+    if (result.error || !result.email || !result.password) {
+      setError(result.error || "Guest login is not configured properly.");
       setLoadingType(null);
+      return;
     }
+
+    await handleSignIn(result.email, result.password, "guest");
   };
 
   return (
     <div className="flex h-dvh w-full items-center justify-center">
-      {/* Login Card Container */}
       <div className="w-full max-w-sm p-6 space-y-4 border border-border rounded-xl bg-card backdrop-blur-md">
-        {/* Header Section */}
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold tracking-tight">Flowstate Login</h1>
           <p className="text-sm text-foreground-muted">Sign in to continue.</p>
         </div>
 
-        {/* Error Notification Banner */}
         {error && (
           <div
             className="p-3 text-xs font-medium text-destructive bg-destructive-bg border border-destructive-border rounded-lg text-center"
@@ -138,7 +101,6 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Credentials Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block space-y-2">
             <span className="text-xs font-medium text-foreground-muted">
@@ -175,7 +137,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Divider */}
         <div className="relative flex items-center">
           <div className="grow border-t border-border"></div>
           <span className="shrink mx-4 text-xs text-foreground-muted uppercase">
@@ -184,7 +145,6 @@ export default function LoginPage() {
           <div className="grow border-t border-border"></div>
         </div>
 
-        {/* Guest Login Button */}
         <button
           type="button"
           disabled={loadingType !== null}
@@ -196,7 +156,6 @@ export default function LoginPage() {
             : "Sign in as Guest"}
         </button>
 
-        {/* Registration Link Footer */}
         <div className="text-center text-xs text-foreground-muted">
           Don't have an account yet?{" "}
           <Link href="/register/" className="text-foreground hover:underline">
