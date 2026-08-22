@@ -95,25 +95,3 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 });
-
-/**
- * Handles the secure logout process, setting the user's online status to false in the database
- * and destroying the active session.
- *
- * @async
- * @returns {Promise<void>}
- */
-export async function handleSignOut() {
-  "use server";
-
-  const session = await auth();
-
-  if (session?.user?.id) {
-    await db
-      .update(usersTable)
-      .set({ isOnline: false })
-      .where(eq(usersTable.id, session.user.id));
-  }
-
-  await signOut({ redirectTo: "/" });
-}

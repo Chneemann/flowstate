@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { MoreHorizontal, X } from "lucide-react";
 import { LEGAL_LINKS, COPYRIGHT_TEXT, ICON_MAP } from "@/utils/legal";
+import SignOutButton from "../ui/buttons/SignOutButton";
 
 /**
  * Renders a mobile menu button and a slide-up modal overlay containing
@@ -130,6 +131,9 @@ export default function MobileLegalMenu() {
                   </Link>
                 );
               })}
+
+              {/* Sign Out Button */}
+              <SignOutButton />
             </div>
 
             {/* Shared Copyright */}

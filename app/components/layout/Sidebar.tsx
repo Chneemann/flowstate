@@ -1,5 +1,5 @@
 /**
- * @file Sidebar.tsx
+ * @file components/layout/Sidebar.tsx
  * @description Server/Client component rendering the desktop application sidebar layout including the brand logo, navigation links, and sign-out option.
  */
 
@@ -23,9 +23,7 @@ export default function Sidebar() {
       </div>
 
       {/* Lower Section */}
-      <div className="flex justify-center">
-        <SignOutButton />
-      </div>
+      <SignOutButton align="center" />
     </aside>
   );
 }
