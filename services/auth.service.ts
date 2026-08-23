@@ -3,6 +3,7 @@
  * @description Authentication service providing helper functions for guest credentials, sign-in, and registration.
  */
 
+import { loginSchema, registerSchema } from "@/lib/schemas/auth";
 import { signIn } from "next-auth/react";
 
 /**
@@ -23,18 +24,24 @@ export async function getGuestCredentials() {
 }
 
 /**
- * Authenticates a user using credentials via NextAuth.
+ * Authenticates a user using email and password credentials, performing client-side validation first.
  *
  * @async
  * @param {string} email - The user's email address.
  * @param {string} password - The user's account password.
- * @returns {Promise<{ success?: boolean; error?: string }>} An object indicating success or describing the authentication error.
+ * @returns {Promise<{ success?: boolean; error?: string }>} An object indicating sign-in success or an error message.
  */
 export async function loginUser(email: string, password: string) {
+  const validationResult = loginSchema.safeParse({ email, password });
+
+  if (!validationResult.success) {
+    return { error: validationResult.error.issues[0].message };
+  }
+
   try {
     const res = await signIn("credentials", {
-      email,
-      password,
+      email: validationResult.data.email,
+      password: validationResult.data.password,
       redirect: false,
     });
 
@@ -59,22 +66,24 @@ export async function loginUser(email: string, password: string) {
 }
 
 /**
- * Registers a new user account via the registration API endpoint.
+ * Registers a new user account by validating the form data and submitting it to the backend registration route.
  *
  * @async
- * @param {Record<string, any>} payload - The user registration form payload containing user details and passwords.
- * @returns {Promise<{ success?: boolean; error?: string }>} An object indicating success or describing the registration error.
+ * @param {Record<string, any>} payload - The user registration form payload containing credentials and user details.
+ * @returns {Promise<{ success?: boolean; error?: string }>} An object indicating successful registration or an error message.
  */
 export async function registerUser(payload: Record<string, any>) {
-  if (payload.password !== payload.confirmPassword) {
-    return { error: "Passwords do not match" };
+  const validationResult = registerSchema.safeParse(payload);
+
+  if (!validationResult.success) {
+    return { error: validationResult.error.issues[0].message };
   }
 
   try {
     const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(validationResult.data),
     });
 
     const contentType = response.headers.get("content-type");
