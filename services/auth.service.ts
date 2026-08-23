@@ -24,6 +24,31 @@ export async function getGuestCredentials() {
 }
 
 /**
+ * Triggers guest authentication securely via the backend API route.
+ *
+ * @async
+ * @returns {Promise<{ success?: boolean; error?: string }>} An object indicating success or describing the error.
+ */
+export async function loginAsGuest() {
+  try {
+    const response = await fetch("/api/auth/guest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { error: data.error || "Guest login failed." };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    return { error: "Server error: API endpoint not available" };
+  }
+}
+
+/**
  * Authenticates a user using email and password credentials, performing client-side validation first.
  *
  * @async

@@ -10,13 +10,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Inject NEXT_PUBLIC_ vars at build time (required for client-side embedding)
-ARG NEXT_PUBLIC_GUEST_EMAIL
-ARG NEXT_PUBLIC_GUEST_PASSWORD
-
-ENV NEXT_PUBLIC_GUEST_EMAIL=$NEXT_PUBLIC_GUEST_EMAIL
-ENV NEXT_PUBLIC_GUEST_PASSWORD=$NEXT_PUBLIC_GUEST_PASSWORD
-
 RUN npm run build
 
 # 3. Run production image (Node.js server)

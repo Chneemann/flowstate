@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getGuestCredentials, loginUser } from "@/services/auth.service";
+import { loginAsGuest, loginUser } from "@/services/auth.service";
 
 /**
  * Renders the login page containing the authentication form, error handling,
@@ -65,7 +65,7 @@ export default function LoginPage() {
   };
 
   /**
-   * Fetches guest user credentials and triggers guest authentication.
+   * Triggers secure guest authentication via the backend service.
    *
    * @async
    */
@@ -73,15 +73,15 @@ export default function LoginPage() {
     setError(null);
     setLoadingType("guest");
 
-    const result = await getGuestCredentials();
+    const result = await loginAsGuest();
 
-    if (result.error || !result.email || !result.password) {
-      setError(result.error || "Guest login is not configured properly.");
+    if (result.error) {
+      setError(result.error);
       setLoadingType(null);
       return;
     }
 
-    await handleSignIn(result.email, result.password, "guest");
+    router.push("/summary");
   };
 
   return (
