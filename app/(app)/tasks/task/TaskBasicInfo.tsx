@@ -41,6 +41,7 @@ export default function TaskBasicInfo({
         <input
           type="text"
           required
+          maxLength={255}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Redesign Landing Page"
@@ -56,6 +57,7 @@ export default function TaskBasicInfo({
         <textarea
           rows={4}
           required
+          maxLength={2000}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Add details about this task..."

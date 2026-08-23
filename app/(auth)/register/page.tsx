@@ -73,6 +73,7 @@ export default function RegisterPage() {
               name="firstName"
               type="text"
               placeholder="First Name*"
+              maxLength={50}
               required
               className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
             />
@@ -80,6 +81,7 @@ export default function RegisterPage() {
               name="lastName"
               type="text"
               placeholder="Last Name*"
+              maxLength={50}
               required
               className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
             />
@@ -88,6 +90,7 @@ export default function RegisterPage() {
             name="email"
             type="email"
             placeholder="Email*"
+            maxLength={255}
             required
             className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
           />
@@ -95,6 +98,7 @@ export default function RegisterPage() {
             name="password"
             type="password"
             placeholder="Password*"
+            maxLength={72}
             required
             className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
           />
@@ -102,6 +106,7 @@ export default function RegisterPage() {
             name="confirmPassword"
             type="password"
             placeholder="Confirm Password*"
+            maxLength={72}
             required
             className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
           />
