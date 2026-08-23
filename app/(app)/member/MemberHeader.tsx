@@ -1,5 +1,5 @@
 /**
- * @file member/MemberHeader.tsx
+ * @file app/(app)/member/MemberHeader.tsx
  * @description Client component rendering the header section for the team members page.
  */
 

@@ -1,5 +1,5 @@
 /**
- * @file trash/components/TaskActionButton.tsx
+ * @file app/(app)/trash/components/TaskActionButton.tsx
  * @description Client component handling task restoration or permanent deletion requests with loading state and router refresh.
  */
 

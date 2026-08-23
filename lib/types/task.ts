@@ -1,5 +1,5 @@
 /**
- * @file types/task.ts
+ * @file app/lib/types/task.ts
  * @description Central type definitions and global configurations for task management.
  */
 

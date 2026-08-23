@@ -1,9 +1,9 @@
 /**
- * @file dashboard/card/CardPriority.tsx
+ * @file app/(app)/dashboard/card/CardPriority.tsx
  * @description Client component rendering the dynamic priority badge for a card based on configuration.
  */
 
-import { TaskPriority, PRIORITY_CONFIG } from "@/types/task";
+import { TaskPriority, PRIORITY_CONFIG } from "@/lib/types/task";
 
 /**
  * Renders a styled priority badge for a card.

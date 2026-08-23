@@ -1,12 +1,12 @@
 /**
- * @file components/layout/Footer.tsx
+ * @file app/components/layout/Footer.tsx
  * @description Client component rendering the site footer with a copyright notice and links to legal pages like Imprint and Privacy Policy.
  */
 
 "use client";
 
 import Link from "next/link";
-import { LEGAL_LINKS, COPYRIGHT_TEXT, ICON_MAP } from "@/utils/legal";
+import { LEGAL_LINKS, COPYRIGHT_TEXT, ICON_MAP } from "@/lib/utils/legal";
 
 /**
  * Renders the site footer containing the dynamic copyright notice and legal compliance links with icons.

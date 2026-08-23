@@ -1,5 +1,5 @@
 /**
- * @file db/schema.ts
+ * @file app/db/schema.ts
  * @description Defines the PostgreSQL database schema for users, tasks, and task assignees using Drizzle ORM, including custom enums and relations.
  */
 

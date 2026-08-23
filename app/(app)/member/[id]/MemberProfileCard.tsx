@@ -1,5 +1,5 @@
 /**
- * @file MemberProfileCard.tsx
+ * @file app/(app)/member/[id]/MemberProfileCard.tsx
  * @description Client component rendering detailed profile information and activity metrics for a specific team member.
  */
 
@@ -10,9 +10,9 @@ import {
   getInitials,
   formatTimeAgo,
   capitalize,
-} from "@/utils/user";
+} from "@/lib/utils/user";
 import { Mail, Clock, ShieldCheck } from "lucide-react";
-import { UserListItem } from "@/types/user";
+import { UserListItem } from "@/lib/types/user";
 
 /**
  * Properties for the MemberProfileCard component.

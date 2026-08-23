@@ -1,5 +1,5 @@
 /**
- * @file components/ui/HighlightText.tsx
+ * @file app/components/ui/HighlightText.tsx
  * @description Component to highlight matching search query terms within a text string.
  */
 

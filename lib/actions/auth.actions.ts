@@ -1,5 +1,5 @@
 /**
- * @file actions/auth.actions.ts
+ * @file app/lib/actions/auth.actions.ts
  * @description Server actions for handling user logout and status updates.
  */
 

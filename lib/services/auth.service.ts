@@ -1,9 +1,9 @@
 /**
- * @file services/auth.service.ts
+ * @file app/lib/services/auth.service.ts
  * @description Authentication service providing helper functions for guest credentials, sign-in, and registration.
  */
 
-import { loginSchema, registerSchema } from "@/lib/schemas/auth";
+import { loginSchema, registerSchema } from "@/lib/schemas/auth.schema";
 import { signIn } from "next-auth/react";
 
 /**

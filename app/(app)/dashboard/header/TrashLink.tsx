@@ -1,5 +1,5 @@
 /**
- * @file dashboard/header/TrashLink.tsx
+ * @file app/(app)/dashboard/header/TrashLink.tsx
  * @description Client component rendering a navigation link button to the trash view with a dynamic item counter badge fetched via SWR.
  */
 

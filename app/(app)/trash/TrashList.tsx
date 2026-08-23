@@ -1,11 +1,11 @@
 /**
- * @file trash/TrashList.tsx
+ * @file app/(app)/trash/TrashList.tsx
  * @description Client component rendering the list of deleted tasks with rich metadata, priority badges, and restore/delete actions.
  */
 
 "use client";
 
-import { Task, PRIORITY_CONFIG } from "@/types/task";
+import { Task, PRIORITY_CONFIG } from "@/lib/types/task";
 import { Calendar } from "lucide-react";
 import TaskActionButton from "./components/TaskActionButton";
 import HighlightText from "@/app/components/ui/HighlightText";

@@ -1,11 +1,11 @@
 /**
- * @file services/task.service.ts
+ * @file app/lib/services/task.service.ts
  * @description Business logic service handling task permissions, database queries, status updates, and soft deletions.
  */
 
 import { db } from "@/db";
 import { tasksTable, taskAssigneesTable, usersTable } from "@/db/schema";
-import { DbTask, TaskPayload, TaskStatus } from "@/types/task";
+import { DbTask, TaskPayload, TaskStatus } from "@/lib/types/task";
 import {
   and,
   eq,

@@ -1,5 +1,5 @@
 /**
- * @file trash/page.tsx
+ * @file app/(app)/trash/page.tsx
  * @description Server component rendering the trash management view with database search filtering.
  */
 
@@ -7,8 +7,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import TrashList from "../trash/TrashList";
 import TrashHeader from "../trash/components/TrashHeader";
-import { TaskService } from "@/services/task.service";
-import { Task } from "@/types/task";
+import { TaskService } from "@/lib/services/task.service";
+import { Task } from "@/lib/types/task";
 
 /**
  * Renders the trash page view, fetching soft-deleted tasks for the authenticated user

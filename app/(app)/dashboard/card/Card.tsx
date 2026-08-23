@@ -1,12 +1,12 @@
 /**
- * @file dashboard/card/Card.tsx
+ * @file app/(app)/dashboard/card/Card.tsx
  * @description Client component rendering a single card container with individual loading states and modular sub-components.
  */
 
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { Task, TaskStatus } from "@/types/task";
+import { Task, TaskStatus } from "@/lib/types/task";
 import CardActions from "./CardActions";
 import CardAvatars from "./CardAvatars";
 import CardDueDate from "./CardDueDate";

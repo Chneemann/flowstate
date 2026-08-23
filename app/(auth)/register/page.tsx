@@ -1,5 +1,5 @@
 /**
- * @file (auth)/register/page.tsx
+ * @file app/(auth)/register/page.tsx
  * @description Client component providing a user registration interface utilizing the auth service.
  */
 
@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { registerUser } from "@/services/auth.service";
+import { registerUser } from "@/lib/services/auth.service";
 
 /**
  * Renders the registration page featuring a sign-up form, error feedback,

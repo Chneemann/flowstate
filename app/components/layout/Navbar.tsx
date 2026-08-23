@@ -1,5 +1,5 @@
 /**
- * @file components/layout/Navbar.tsx
+ * @file app/components/layout/Navbar.tsx
  * @description Client component providing responsive navigation for desktop and mobile views with active route indicators and trash count.
  */
 

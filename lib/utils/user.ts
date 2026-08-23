@@ -1,5 +1,5 @@
 /**
- * @file utils/user.ts
+ * @file app/lib/utils/user.ts
  * @description Utility functions for user formatting, initials generation, and name capitalization.
  */
 

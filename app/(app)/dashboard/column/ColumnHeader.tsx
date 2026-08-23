@@ -1,5 +1,5 @@
 /**
- * @file dashboard/column/ColumnHeader.tsx
+ * @file app/(app)/dashboard/column/ColumnHeader.tsx
  * @description Component rendering the column header with title, color indicator, item count, and add button with pre-filled status.
  */
 
@@ -7,7 +7,7 @@
 
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { TaskStatus } from "@/types/task";
+import { TaskStatus } from "@/lib/types/task";
 
 /**
  * Properties for the ColumnHeader component.

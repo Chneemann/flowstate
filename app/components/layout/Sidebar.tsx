@@ -1,11 +1,11 @@
 /**
- * @file components/layout/Sidebar.tsx
+ * @file app/components/layout/Sidebar.tsx
  * @description Server/Client component rendering the desktop application sidebar layout including the brand logo, navigation links, and sign-out option.
  */
 
 import BrandLogo from "./BrandLogo";
 import Navbar from "./Navbar";
-import SignOutButton from "../ui/buttons/SignOutButton";
+import SignOutButton from "@/app/components/ui/buttons/SignOutButton";
 
 /**
  * Renders the responsive desktop sidebar containing top navigation elements

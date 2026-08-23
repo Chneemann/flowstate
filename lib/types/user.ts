@@ -1,10 +1,10 @@
 /**
- * @file types/user.ts
+ * @file app/lib/types/user.ts
  * @description Type definitions and constants related to user entities and UI preferences.
  */
 
 import { type User as DbUser } from "@/db/schema";
-import { UserService } from "@/services/user.service";
+import { UserService } from "@/lib/services/user.service";
 
 // ==========================================
 // Types

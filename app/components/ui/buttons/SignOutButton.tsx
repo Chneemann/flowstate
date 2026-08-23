@@ -1,9 +1,9 @@
 /**
- * @file components/ui/buttons/SignOutButton.tsx
+ * @file app/components/ui/buttons/SignOutButton.tsx
  * @description Server Action-powered client component rendering a sign-out button with customizable alignment.
  */
 
-import { handleSignOut } from "@/actions/auth.actions";
+import { handleSignOut } from "@/lib/actions/auth.actions";
 import { LogOut } from "lucide-react";
 
 /**

@@ -1,5 +1,5 @@
 /**
- * @file app/summary/sections/SummaryKpiGrid.tsx
+ * @file app/(app)/summary/sections/SummaryKpiGrid.tsx
  * @description Client component rendering the primary KPI metrics grid.
  */
 

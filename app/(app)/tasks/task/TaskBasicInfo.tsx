@@ -1,5 +1,5 @@
 /**
- * @file tasks/task/TaskBasicInfo.tsx
+ * @file app/(app)/tasks/task/TaskBasicInfo.tsx
  * @description Component for title and description input fields.
  */
 

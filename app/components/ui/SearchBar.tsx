@@ -1,5 +1,5 @@
 /**
- * @file components/layout/SearchBar.tsx
+ * @file app/components/layout/SearchBar.tsx
  * @description Client component managing URL search parameters with debounced input and smooth transition state.
  */
 

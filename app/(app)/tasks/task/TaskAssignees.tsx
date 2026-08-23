@@ -1,5 +1,5 @@
 /**
- * @file tasks/task/TaskAssignees.tsx
+ * @file app/(app)/tasks/task/TaskAssignees.tsx
  * @description Component for selecting task assignees.
  */
 

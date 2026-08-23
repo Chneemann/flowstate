@@ -1,9 +1,9 @@
 /**
- * @file app/privacy/page.tsx
+ * @file app/(legal)/privacy/page.tsx
  * @description Server component rendering the privacy policy page with a title header and back button navigation.
  */
 
-import { GoBackButton } from "../components/ui/buttons/GoBackButton";
+import { GoBackButton } from "../../components/ui/buttons/GoBackButton";
 
 /**
  * Renders the privacy policy page containing the main title and layout container alongside a back navigation button.

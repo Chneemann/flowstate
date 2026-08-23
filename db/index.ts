@@ -1,5 +1,5 @@
 /**
- * @file db/index.ts
+ * @file app/db/index.ts
  * @description Initializes the PostgreSQL database connection using postgres-js and configures the Drizzle ORM instance.
  */
 

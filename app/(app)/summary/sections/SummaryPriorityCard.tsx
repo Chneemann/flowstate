@@ -1,12 +1,12 @@
 /**
- * @file app/summary/sections/SummaryPriorityCard.tsx
+ * @file app/(app)/summary/sections/SummaryPriorityCard.tsx
  * @description Client component rendering the priority severity analysis breakdown.
  */
 
 "use client";
 
 import { Flame } from "lucide-react";
-import { PRIORITY_CONFIG } from "@/types/task";
+import { PRIORITY_CONFIG } from "@/lib/types/task";
 
 /**
  * Properties for the SummaryPriorityCard component.

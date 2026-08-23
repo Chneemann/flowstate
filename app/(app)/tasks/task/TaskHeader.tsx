@@ -1,5 +1,5 @@
 /**
- * @file tasks/task/TaskHeader.tsx
+ * @file app/(app)/tasks/task/TaskHeader.tsx
  * @description Component rendering the top title header and action buttons for the task view.
  */
 

@@ -1,10 +1,10 @@
 /**
- * @file member/page.tsx
+ * @file app/(app)/member/page.tsx
  * @description Server component rendering the members directory page by fetching all registered users and passing them to the MemberList component.
  */
 
 import MemberList from "./list/MemberList";
-import { UserService } from "@/services/user.service";
+import { UserService } from "@/lib/services/user.service";
 
 /**
  * Renders the member management page displaying all registered users in a list container.

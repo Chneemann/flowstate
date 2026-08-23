@@ -1,5 +1,5 @@
 /**
- * @file components/layout/MobileLegalMenu.tsx
+ * @file app/components/layout/MobileLegalMenu.tsx
  * @description Client component providing a mobile toggle menu for accessing legal links and copyright information in a slide-up overlay.
  */
 
@@ -8,8 +8,8 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { MoreHorizontal, X } from "lucide-react";
-import { LEGAL_LINKS, COPYRIGHT_TEXT, ICON_MAP } from "@/utils/legal";
-import SignOutButton from "../ui/buttons/SignOutButton";
+import { LEGAL_LINKS, COPYRIGHT_TEXT, ICON_MAP } from "@/lib/utils/legal";
+import SignOutButton from "@/app/components/ui/buttons/SignOutButton";
 
 /**
  * Renders a mobile menu button and a slide-up modal overlay containing

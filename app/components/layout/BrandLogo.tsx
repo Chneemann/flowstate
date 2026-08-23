@@ -1,9 +1,7 @@
 /**
- * @file components/layout/BrandLogo.tsx
+ * @file app/components/layout/BrandLogo.tsx
  * @description Client/Server component rendering the application brand logo and title header.
  */
-
-import React from "react";
 
 /**
  * Renders the brand logo image along with the application name and edition subtitle.

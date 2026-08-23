@@ -1,3 +1,8 @@
+/**
+ * @file next.config.ts
+ * @description Next.js framework configuration file defining standalone output builds, image optimizations, and Turbopack root settings.
+ */
+
 import path from "path";
 
 /** @type {import('next').NextConfig} */

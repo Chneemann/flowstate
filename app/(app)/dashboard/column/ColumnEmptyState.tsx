@@ -1,5 +1,5 @@
 /**
- * @file dashboard/column/ColumnEmptyState.tsx
+ * @file app/(app)/dashboard/column/ColumnEmptyState.tsx
  * @description Client component rendering a placeholder card when a specific column contains no tasks.
  */
 

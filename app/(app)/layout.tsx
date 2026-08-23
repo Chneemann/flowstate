@@ -1,5 +1,5 @@
 /**
- * @file (app)/layout.tsx
+ * @file app/(app)/layout.tsx
  * @description Server component layout protecting authenticated routes by verifying user sessions and arranging the main dashboard application structure with responsive sidebars, headers, navigation bars, error toasts, and footers.
  */
 

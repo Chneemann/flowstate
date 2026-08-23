@@ -1,5 +1,5 @@
 /**
- * @file lib/schemas/auth.ts
+ * @file app/lib/schemas/auth.schema.ts
  * @description Zod validation schemas for authentication forms, including login and user registration data constraints.
  */
 

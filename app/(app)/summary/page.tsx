@@ -1,12 +1,12 @@
 /**
- * @file app/summary/page.tsx
+ * @file app/(app)/summary/page.tsx
  * @description Server component rendering an advanced analytical summary page with comprehensive task metrics.
  */
 
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { TaskService } from "@/services/task.service";
-import { COLUMNS } from "@/types/task";
+import { TaskService } from "@/lib/services/task.service";
+import { COLUMNS } from "@/lib/types/task";
 import SummaryHeader from "./sections/SummaryHeader";
 import SummaryKpiGrid from "./sections/SummaryKpiGrid";
 import SummaryStatusCard from "./sections/SummaryStatusCard";

@@ -1,5 +1,5 @@
 /**
- * @file dashboard/column/Column.tsx
+ * @file app/(app)/dashboard/column/Column.tsx
  * @description Client component rendering a single column container supporting drag-and-drop drop targets, task lists, and dynamic updating/deleting states.
  */
 
@@ -9,7 +9,7 @@ import { useState } from "react";
 import Card from "../card/Card";
 import ColumnHeader from "./ColumnHeader";
 import ColumnEmptyState from "./ColumnEmptyState";
-import { ColumnConfig, Task, TaskStatus } from "@/types/task";
+import { ColumnConfig, Task, TaskStatus } from "@/lib/types/task";
 
 /**
  * Properties for the Column component.

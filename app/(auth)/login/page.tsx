@@ -1,5 +1,5 @@
 /**
- * @file (auth)/login/page.tsx
+ * @file app/(auth)/login/page.tsx
  * @description Client component providing a user login interface utilizing the auth service.
  */
 
@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { loginAsGuest, loginUser } from "@/services/auth.service";
+import { loginAsGuest, loginUser } from "@/lib/services/auth.service";
 
 /**
  * Renders the login page containing the authentication form, error handling,

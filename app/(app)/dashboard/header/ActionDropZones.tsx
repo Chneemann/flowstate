@@ -1,5 +1,5 @@
 /**
- * @file dashboard/header/ActionDropZones.tsx
+ * @file app/(app)/dashboard/header/ActionDropZones.tsx
  * @description Client component rendering interactive drop zones for editing and deleting tasks during drag-and-drop operations.
  */
 

@@ -1,13 +1,13 @@
 /**
- * @file dashboard/card/CardAvatars.tsx
+ * @file app/(app)/dashboard/card/CardAvatars.tsx
  * @description Client component rendering team avatars and creator badge for a card.
  */
 
 "use client";
 
 import { Crown } from "lucide-react";
-import { Task } from "@/types/task";
-import { getInitials } from "@/utils/user";
+import { Task } from "@/lib/types/task";
+import { getInitials } from "@/lib/utils/user";
 
 /**
  * Properties for the UserAvatar component.

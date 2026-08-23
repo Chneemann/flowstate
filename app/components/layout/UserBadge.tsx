@@ -1,11 +1,11 @@
 /**
- * @file UserBadge.tsx
+ * @file app/components/layout/UserBadge.tsx
  * @description Server component rendering the authenticated user profile badge with initials, name, and online status.
  */
 
 import { auth } from "@/auth";
-import { UserService } from "@/services/user.service";
-import { getInitials } from "@/utils/user";
+import { UserService } from "@/lib/services/user.service";
+import { getInitials } from "@/lib/utils/user";
 
 /**
  * Renders a user profile badge including an avatar initial circle with user color, full name, and online status indicator.

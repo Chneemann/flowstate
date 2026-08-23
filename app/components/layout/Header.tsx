@@ -1,5 +1,5 @@
 /**
- * @file components/layout/Header.tsx
+ * @file app/components/layout/Header.tsx
  * @description Server component header arranging mobile logo, responsive search bar glued to the logo on mobile, and user badge.
  */
 

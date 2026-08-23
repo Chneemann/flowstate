@@ -1,14 +1,14 @@
 /**
- * @file dashboard/page.tsx
+ * @file app/(app)/dashboard/page.tsx
  * @description Server component rendering the main dashboard page using the TaskService with DB search filtering.
  */
 
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Board from "./Board";
-import { Task } from "@/types/task";
-import { DbUser } from "@/types/user";
-import { TaskService } from "@/services/task.service";
+import { Task } from "@/lib/types/task";
+import { DbUser } from "@/lib/types/user";
+import { TaskService } from "@/lib/services/task.service";
 
 /**
  * Renders the primary dashboard view after performing authentication checks,

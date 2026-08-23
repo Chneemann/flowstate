@@ -1,5 +1,5 @@
 /**
- * @file services/user.service.ts
+ * @file app/lib/services/user.service.ts
  * @description Business logic service handling user-related database queries.
  */
 

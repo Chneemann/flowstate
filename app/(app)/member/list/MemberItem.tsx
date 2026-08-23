@@ -1,5 +1,5 @@
 /**
- * @file member/list/MemberItem.tsx
+ * @file app/(app)/member/list/MemberItem.tsx
  * @description Client component rendering an individual member item card displaying avatar initials, full name, role badge, email address, online status indicator, and last active timestamp.
  */
 
@@ -11,9 +11,9 @@ import {
   getStatusColor,
   formatTimeAgo,
   capitalize,
-} from "@/utils/user";
+} from "@/lib/utils/user";
 import { Mail } from "lucide-react";
-import { UserListItem } from "@/types/user";
+import { UserListItem } from "@/lib/types/user";
 import Link from "next/link";
 
 /**

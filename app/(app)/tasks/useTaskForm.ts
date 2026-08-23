@@ -1,12 +1,12 @@
 /**
- * @file tasks/useTaskForm.ts
+ * @file app/(app)/tasks/useTaskForm.ts
  * @description Custom hook managing state, validation, and submission logic for task creation and editing.
  */
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { TaskPriority, TaskStatus, DbTask } from "@/types/task";
-import { taskSchema } from "@/lib/schemas/task";
+import { TaskPriority, TaskStatus, DbTask } from "@/lib/types/task";
+import { taskSchema } from "@/lib/schemas/task.schema";
 
 /**
  * Custom React hook that encapsulates form state management, field updates, assignee toggling,

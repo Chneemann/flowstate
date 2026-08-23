@@ -1,5 +1,5 @@
 /**
- * @file app/summary/sections/SummaryHeader.tsx
+ * @file app/(app)/summary/sections/SummaryHeader.tsx
  * @description Client component rendering the analytical page header.
  */
 

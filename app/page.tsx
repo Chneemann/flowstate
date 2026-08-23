@@ -1,5 +1,5 @@
 /**
- * @file page.tsx
+ * @file app/page.tsx
  * @description Server component acting as the welcome landing page, redirecting authenticated users to the summary view or presenting sign-in and register options.
  */
 

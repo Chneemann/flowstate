@@ -1,5 +1,5 @@
 /**
- * @file dashboard/header/Header.tsx
+ * @file app/(app)/dashboard/header/Header.tsx
  * @description Client component rendering the dashboard top header section, including workspace info, deletion drop zones, task creation buttons, and trash links.
  */
 

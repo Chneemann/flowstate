@@ -1,5 +1,5 @@
 /**
- * @file components/ui/buttons/GoBackButton.tsx
+ * @file app/components/ui/buttons/GoBackButton.tsx
  * @description Client component rendering an interactive back button with intelligent history checking and animated hover effects.
  */
 

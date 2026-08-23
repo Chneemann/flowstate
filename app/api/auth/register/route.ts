@@ -1,5 +1,5 @@
 /**
- * @file api/auth/register/route.ts
+ * @file app/api/auth/register/route.ts
  * @description API route handler for user registration utilizing Zod for validation, bcrypt hashing, and auto sign-in.
  */
 
@@ -9,8 +9,8 @@ import { usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
-import { AVAILABLE_COLORS } from "@/types/user";
-import { registerSchema } from "@/lib/schemas/auth";
+import { AVAILABLE_COLORS } from "@/lib/types/user";
+import { registerSchema } from "@/lib/schemas/auth.schema";
 
 /**
  * Handles POST requests to register a new user.

@@ -1,5 +1,5 @@
 /**
- * @file components/ErrorToast.tsx
+ * @file app/components/ErrorToast.tsx
  * @description Client component displaying a modern floating glassmorphism error notification with a pauseable countdown progress bar driven by requestAnimationFrame.
  */
 

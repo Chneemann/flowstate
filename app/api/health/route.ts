@@ -1,5 +1,5 @@
 /**
- * @file api/health/route.ts
+ * @file app/api/health/route.ts
  * @description API route handler performing a database health check by executing a test query and returning the system status.
  */
 

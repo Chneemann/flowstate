@@ -1,5 +1,5 @@
 /**
- * @file layout.tsx
+ * @file app/layout.tsx
  * @description Root layout component defining global HTML structure, metadata, and Tailwind styling for the application.
  */
 

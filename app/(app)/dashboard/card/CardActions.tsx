@@ -1,5 +1,5 @@
 /**
- * @file dashboard/card/CardActions.tsx
+ * @file app/(app)/dashboard/card/CardActions.tsx
  * @description Client component rendering the mobile status transition, edit option, and deletion dropdown for a card.
  */
 
@@ -8,7 +8,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal, CornerDownRight, Trash2, Pencil } from "lucide-react";
-import { COLUMNS, TaskStatus } from "@/types/task";
+import { COLUMNS, TaskStatus } from "@/lib/types/task";
 
 /**
  * Properties for the CardActions component.

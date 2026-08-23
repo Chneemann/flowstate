@@ -1,5 +1,5 @@
 /**
- * @file trash/components/TrashHeader.tsx
+ * @file app/(app)/trash/components/TrashHeader.tsx
  * @description Client component rendering the header section for the trash view, including an icon, title, description, and navigation back to the dashboard.
  */
 

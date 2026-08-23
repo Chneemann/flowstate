@@ -1,5 +1,5 @@
 /**
- * @file utils/legal.ts
+ * @file app/lib/utils/legal.ts
  * @description Defines legal navigation configurations, icon mappings, and dynamic copyright text generators.
  */
 

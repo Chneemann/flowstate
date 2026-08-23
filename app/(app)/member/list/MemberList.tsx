@@ -1,12 +1,12 @@
 /**
- * @file member/list/MemberList.tsx
+ * @file app/(app)/member/list/MemberList.tsx
  * @description Client component rendering the list of team members along with the section header and an empty state fallback.
  */
 
 "use client";
 
 import MemberHeader from "../MemberHeader";
-import { UserListItem } from "@/types/user";
+import { UserListItem } from "@/lib/types/user";
 import MemberItem from "./MemberItem";
 
 /**

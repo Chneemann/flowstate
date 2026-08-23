@@ -1,5 +1,5 @@
 /**
- * @file lib/schemas/task.ts
+ * @file app/lib/schemas/task.schema.ts
  * @description Zod validation schema for task creation and modification operations, enforcing constraints on title, description, status, priority, dates, and assignees.
  */
 

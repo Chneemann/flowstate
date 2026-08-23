@@ -1,5 +1,5 @@
 /**
- * @file dashboard/header/NewTaskButton.tsx
+ * @file app/(app)/dashboard/header/NewTaskButton.tsx
  * @description Client component rendering an interactive trigger button for creating new tasks.
  */
 

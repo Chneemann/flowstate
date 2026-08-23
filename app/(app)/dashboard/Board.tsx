@@ -1,5 +1,5 @@
 /**
- * @file dashboard/Board.tsx
+ * @file app/(app)/dashboard/Board.tsx
  * @description Client component wrapping the columns grid, tracking individual task update/deletion states, and handling asynchronous mutations via API with cache revalidation.
  */
 
@@ -8,7 +8,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Column from "./column/Column";
-import { COLUMNS, Task, TaskStatus } from "@/types/task";
+import { COLUMNS, Task, TaskStatus } from "@/lib/types/task";
 import Header from "./header/Header";
 import { mutate } from "swr";
 

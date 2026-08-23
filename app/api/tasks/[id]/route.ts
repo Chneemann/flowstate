@@ -6,8 +6,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { taskStatusEnum } from "@/db/schema";
-import { TaskService } from "@/services/task.service";
-import { RouteContext, TaskStatus } from "@/types/task";
+import { TaskService } from "@/lib/services/task.service";
+import { RouteContext, TaskStatus } from "@/lib/types/task";
 
 /**
  * Handles PATCH requests to either update a task's status or restore a soft-deleted task,

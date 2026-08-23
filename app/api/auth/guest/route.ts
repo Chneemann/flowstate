@@ -1,5 +1,5 @@
 /**
- * @file api/auth/guest/route.ts
+ * @file app/api/auth/guest/route.ts
  * @description API route handler for guest authentication utilizing server-side environment variables and auto sign-in.
  */
 

@@ -1,5 +1,5 @@
 /**
- * @file (auth)/layout.tsx
+ * @file app/(auth)/layout.tsx
  * @description Layout component wrapping authentication views with a centered container structure and fixed bottom footer.
  */
 

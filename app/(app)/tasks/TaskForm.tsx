@@ -1,5 +1,5 @@
 /**
- * @file tasks/TaskForm.tsx
+ * @file app/(app)/tasks/TaskForm.tsx
  * @description Client component orchestrating modular sub-components for task creation and editing.
  */
 
@@ -7,7 +7,7 @@
 
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { DbTask, TaskStatus } from "@/types/task";
+import { DbTask, TaskStatus } from "@/lib/types/task";
 import { useTaskForm } from "./useTaskForm";
 import TaskHeader from "./task/TaskHeader";
 import TaskBasicInfo from "./task/TaskBasicInfo";

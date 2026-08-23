@@ -25,15 +25,18 @@ A modern, high-performance Kanban & Workflow web application designed to help yo
 
 The project uses Next.js Route Groups to separate public and protected application areas cleanly:
 
+- `.forgejo/workflows/` — Automated SSH deployment pipeline (`deploy.yml`)
 - `app/(auth)/` — Public authentication routes (Login, Register)
 - `app/(app)/` — Protected workspace & dashboard routes (Sidebar, Header, Kanban Board)
 - `app/api/` — Backend API endpoints & Auth handlers (`/api/auth/register`, `[...nextauth]`)
 - `db/` — Database schema definitions, migrations, and Drizzle configuration (`drizzle.config.ts`)
-- `services/` — Business logic layers and external API integration services
-- `utils/` — Shared helper functions, formatters, and global utility logic
-- `types/` — Global TypeScript interfaces and type definitions
+- `lib/` — Centralized core logic folder containing:
+  - `actions/` — Server Actions (e.g., authentication actions)
+  - `schemas/` — Zod validation schemas
+  - `services/` — Business logic layers and external API integration services
+  - `types/` — Global TypeScript interfaces and type definitions
+  - `utils/` — Shared helper functions and formatters
 - `public/` — Static assets (images, icons, fonts)
-- `.forgejo/workflows/` — Automated SSH deployment pipeline (`deploy.yml`)
 
 ## 🚀 CI/CD & Deployment
 

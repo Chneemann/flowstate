@@ -1,10 +1,10 @@
 /**
- * @file dashboard/card/CardDueDate.tsx
+ * @file app/(app)/dashboard/card/CardDueDate.tsx
  * @description Client component rendering the due date badge with overdue status indicators and hover time display.
  */
 
 import { AlertCircle, CalendarDays } from "lucide-react";
-import { Task } from "@/types/task";
+import { Task } from "@/lib/types/task";
 
 /**
  * Renders a due date badge for a card, showing an overdue alert animation

@@ -1,9 +1,9 @@
 /**
- * @file tasks/task/TaskOptions.tsx
+ * @file app/(app)/tasks/task/TaskOptions.tsx
  * @description Component for selecting priority and status using centralized type definitions.
  */
 
-import { TaskPriority, TaskStatus, COLUMNS } from "@/types/task";
+import { TaskPriority, TaskStatus, COLUMNS } from "@/lib/types/task";
 
 /**
  * Properties for the TaskOptions component.

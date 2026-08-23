@@ -1,5 +1,5 @@
 /**
- * @file route.ts
+ * @file app/api/auth/[...nextauth]/route.ts
  * @description API route handler exporting NextAuth authentication request handlers (GET and POST).
  */
 

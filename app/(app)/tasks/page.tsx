@@ -1,5 +1,5 @@
 /**
- * @file tasks/page.tsx
+ * @file app/(app)/tasks/page.tsx
  * @description Server component rendering the task creation or edit page with relations.
  */
 
@@ -9,8 +9,8 @@ import { usersTable } from "@/db/schema";
 import { redirect } from "next/navigation";
 import TaskForm from "./TaskForm";
 import { not, eq } from "drizzle-orm";
-import { TaskService } from "@/services/task.service";
-import { TaskStatus } from "@/types/task";
+import { TaskService } from "@/lib/services/task.service";
+import { TaskStatus } from "@/lib/types/task";
 
 /**
  * Properties for the TaskPage component.

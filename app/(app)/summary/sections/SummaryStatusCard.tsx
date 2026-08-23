@@ -1,12 +1,12 @@
 /**
- * @file app/summary/sections/SummaryStatusCard.tsx
+ * @file app/(app)/summary/sections/SummaryStatusCard.tsx
  * @description Client component rendering the workflow status distribution progress breakdown.
  */
 
 "use client";
 
 import { LayoutDashboard } from "lucide-react";
-import { COLUMNS } from "@/types/task";
+import { COLUMNS } from "@/lib/types/task";
 
 /**
  * Properties for the SummaryStatusCard component.

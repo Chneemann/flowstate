@@ -1,9 +1,9 @@
 /**
- * @file member/[id]/page.tsx
+ * @file app/(app)/member/[id]/page.tsx
  * @description Server component rendering the detailed profile page for a specific member by validating the ID format and fetching user profile data.
  */
 
-import { UserService } from "@/services/user.service";
+import { UserService } from "@/lib/services/user.service";
 import { redirect } from "next/navigation";
 import MemberHeader from "../MemberHeader";
 import MemberProfileCard from "./MemberProfileCard";

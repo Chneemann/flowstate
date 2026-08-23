@@ -1,9 +1,9 @@
 /**
- * @file app/imprint/page.tsx
+ * @file app/(legal)/imprint/page.tsx
  * @description Server component rendering the legal notice (imprint) page with a title header and back button navigation.
  */
 
-import { GoBackButton } from "../components/ui/buttons/GoBackButton";
+import { GoBackButton } from "../../components/ui/buttons/GoBackButton";
 
 /**
  * Renders the imprint/legal notice page containing the main title and layout container.

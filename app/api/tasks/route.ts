@@ -1,12 +1,12 @@
 /**
- * @file api/tasks/route.ts
+ * @file app/api/tasks/route.ts
  * @description API endpoint for creating and updating task records with strict Zod validation.
  */
 
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { TaskService } from "@/services/task.service";
-import { taskSchema } from "@/lib/schemas/task";
+import { TaskService } from "@/lib/services/task.service";
+import { taskSchema } from "@/lib/schemas/task.schema";
 
 /**
  * Validates the incoming task request by checking user authentication, parsing the JSON payload,
