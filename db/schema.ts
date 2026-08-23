@@ -11,6 +11,7 @@ import {
   text,
   timestamp,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 // ==========================================
@@ -50,12 +51,12 @@ export const userRoleEnum = pgEnum("user_role", ["admin", "member", "guest"]);
  */
 export const usersTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
-  email: text("email").notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
   password: text("password").notNull(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  role: text("role").default("member").notNull(),
-  color: text("color").default("bg-indigo-500").notNull(),
+  firstName: varchar("first_name", { length: 50 }).notNull(),
+  lastName: varchar("last_name", { length: 50 }).notNull(),
+  role: userRoleEnum("role").default("member").notNull(),
+  color: varchar("color", { length: 50 }).default("bg-indigo-500").notNull(),
   lastLogin: timestamp("last_login"),
   isOnline: boolean("is_online").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -69,8 +70,8 @@ export const tasksTable = pgTable("tasks", {
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: varchar("description", { length: 2000 }).notNull(),
   status: taskStatusEnum("status").default("todo").notNull(),
   priority: taskPriorityEnum("priority").default("medium").notNull(),
   dueDate: timestamp("due_date").notNull(),
