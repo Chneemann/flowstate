@@ -6,6 +6,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { TaskPriority, TaskStatus, DbTask } from "@/types/task";
+import { taskSchema } from "@/lib/schemas/task";
 
 /**
  * Custom React hook that encapsulates form state management, field updates, assignee toggling,
@@ -65,17 +66,13 @@ export function useTaskForm(
   };
 
   /**
-   * Validates form inputs, combines date and time values, and submits the payload
-   * via API depending on whether the form is in create or edit mode.
+   * Validates form input against Zod schemas and dispatches POST or PATCH network requests to persist task changes.
    *
-   * @async
    * @param {React.SubmitEvent} e - The form submission event.
    */
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
     setError(null);
-
-    if (!form.title.trim()) return;
 
     const finalDate = form.dueDate || todayString;
     const combinedDateTime = new Date(`${finalDate}T${form.dueTime}`);
@@ -85,15 +82,24 @@ export function useTaskForm(
       return;
     }
 
+    const validationResult = taskSchema.safeParse({
+      ...form,
+      dueDate: combinedDateTime.toISOString(),
+    });
+
+    if (!validationResult.success) {
+      setError(validationResult.error.issues[0].message);
+      return;
+    }
+
     startTransition(async () => {
       try {
         const response = await fetch("/api/tasks", {
           method: isEditMode ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            ...validationResult.data,
             id: initialData?.id,
-            ...form,
-            dueDate: combinedDateTime.toISOString(),
           }),
         });
 

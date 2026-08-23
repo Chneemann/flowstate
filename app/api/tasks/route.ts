@@ -1,21 +1,21 @@
 /**
  * @file api/tasks/route.ts
- * @description API endpoint for creating and updating task records with strict existence checks.
+ * @description API endpoint for creating and updating task records with strict Zod validation.
  */
 
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { TaskService } from "@/services/task.service";
-import { TaskPayload } from "@/types/task";
+import { taskSchema } from "@/lib/schemas/task";
 
 /**
  * Validates the incoming task request by checking user authentication, parsing the JSON payload,
- * and ensuring all required task fields (and optional ID if specified) are present.
+ * and running Zod validation against the task schema.
  *
  * @async
  * @param {Request} request - The incoming HTTP request.
  * @param {boolean} [requireId=false] - Whether a task ID is mandatory in the payload body.
- * @returns {Promise<{ userId?: string; body?: TaskPayload & { id?: string }; error?: NextResponse }>} Validation results containing user ID, parsed body, or a NextResponse error.
+ * @returns {Promise<{ userId?: string; body?: any; error?: NextResponse }>} Validation results containing user ID, parsed body, or a NextResponse error.
  */
 async function validateTaskRequest(request: Request, requireId = false) {
   const session = await auth();
@@ -23,19 +23,22 @@ async function validateTaskRequest(request: Request, requireId = false) {
     return { error: new NextResponse("Unauthorized", { status: 401 }) };
   }
 
-  const body: TaskPayload & { id?: string } = await request.json();
+  const jsonBody = await request.json().catch(() => null);
+  if (!jsonBody) {
+    return { error: new NextResponse("Invalid JSON payload", { status: 400 }) };
+  }
 
-  if (
-    (requireId && !body.id) ||
-    !body.title ||
-    !body.description ||
-    !body.dueDate ||
-    !body.status ||
-    !body.priority
-  ) {
-    return {
-      error: new NextResponse("Missing required task fields", { status: 400 }),
-    };
+  const validationResult = taskSchema.safeParse(jsonBody);
+
+  if (!validationResult.success) {
+    const errorMessage = validationResult.error.issues[0].message;
+    return { error: new NextResponse(errorMessage, { status: 400 }) };
+  }
+
+  const body = validationResult.data;
+
+  if (requireId && !body.id) {
+    return { error: new NextResponse("Missing task ID", { status: 400 }) };
   }
 
   return { userId: session.user.id, body };
