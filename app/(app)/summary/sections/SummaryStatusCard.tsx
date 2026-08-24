@@ -64,10 +64,10 @@ export default function SummaryStatusCard({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-foreground-muted font-semibold w-10 text-right">
+                  <span className="text-xs text-foreground-muted font-semibold text-right">
                     {percentage}%
                   </span>
-                  <span className="bg-background/80 py-0.5 rounded-lg border border-border/60 text-xs font-bold w-14 text-right inline-block">
+                  <span className="bg-background/80 px-1.5 py-0.5 rounded-lg border border-border/60 text-xs font-bold text-center inline-block">
                     {count} {count === 1 ? "task" : "tasks"}
                   </span>
                 </div>

@@ -58,16 +58,16 @@ export default function SummaryPriorityCard({
             <div key={pKey} className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span
-                  className={`px-2.5 py-0.5 rounded-lg text-xs font-semibold border ${config.className}`}
+                  className={`px-1.5 py-0.5 rounded-lg text-xs font-semibold border ${config.className}`}
                 >
                   {config.label}
                 </span>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-foreground-muted font-semibold w-10 text-right">
+                  <span className="text-xs text-foreground-muted font-semibold text-right">
                     {percentage}%
                   </span>
-                  <span className="bg-background/80 py-0.5 rounded-lg border border-border/60 text-xs font-bold w-14 text-right inline-block">
+                  <span className="bg-background/80 px-1.5 py-0.5 rounded-lg border border-border/60 text-xs font-bold text-center inline-block">
                     {count} {count === 1 ? "item" : "items"}
                   </span>
                 </div>
