@@ -22,19 +22,21 @@ import { useSearchParams } from "next/navigation";
  * @property {boolean} [isUpdating] - Flag indicating whether the card is currently undergoing an asynchronous update operation.
  * @property {(taskId: string, newStatus: TaskStatus) => void} [onStatusChange] - Callback triggered when the task status changes.
  * @property {(taskId: string) => void} [onDelete] - Callback triggered when the task is deleted.
+ * @property {(task: Task) => void} [onTaskClick] - Callback triggered when clicking on the card body to open task details.
  */
 export interface CardProps {
   task: Task;
   isUpdating?: boolean;
   onStatusChange?: (taskId: string, newStatus: TaskStatus) => void;
   onDelete?: (taskId: string) => void;
+  onTaskClick?: (task: Task) => void;
 }
 
 /**
  * Renders an interactive card container supporting search match highlighting, drag-and-drop actions,
  * loading states, and modular sub-components for priorities, due dates, avatars, and actions.
  *
- * @param {CardProps} props - The component props containing the task object, updating status flag, and status change handler.
+ * @param {CardProps} props - The component props containing the task object, updating status flag, status change handler, delete handler, and task click handler.
  * @returns {JSX.Element} The rendered card component.
  */
 export default function Card({
@@ -42,6 +44,7 @@ export default function Card({
   isUpdating = false,
   onStatusChange,
   onDelete,
+  onTaskClick,
 }: CardProps) {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
@@ -76,6 +79,15 @@ export default function Card({
     <div
       draggable={!isUpdating}
       onDragStart={handleDragStart}
+      onClick={(e) => {
+        if (
+          (e.target as HTMLElement).closest("button") ||
+          (e.target as HTMLElement).closest("a")
+        ) {
+          return;
+        }
+        onTaskClick?.(task);
+      }}
       className={`group relative bg-card/40 border border-border/80 hover:border-primary/60 p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 space-y-3 flex flex-col h-full ${
         isUpdating
           ? "opacity-50 pointer-events-none cursor-wait bg-primary/5 border-primary/40 animate-pulse"

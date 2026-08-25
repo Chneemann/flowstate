@@ -11,6 +11,7 @@ import Column from "./column/Column";
 import { COLUMNS, Task, TaskStatus } from "@/lib/types/task";
 import Header from "./header/Header";
 import { mutate } from "swr";
+import TaskDetailModal from "./modal/TaskModal";
 
 /**
  * Renders the responsive grid container of columns, coordinating state tracking
@@ -23,6 +24,7 @@ import { mutate } from "swr";
 export default function Board({ tasks }: { tasks: Task[] }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [updatingTaskIds, setUpdatingTaskIds] = useState<Set<string>>(
     new Set(),
   );
@@ -112,10 +114,21 @@ export default function Board({ tasks }: { tasks: Task[] }) {
               updatingTaskIds={updatingTaskIds}
               onTaskMove={updateTaskStatus}
               onTaskDelete={deleteTask}
+              onTaskClick={(task) => setSelectedTask(task)}
             />
           );
         })}
       </div>
+
+      {/* Detail Modal */}
+      <TaskDetailModal
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onDelete={(taskId) => {
+          deleteTask(taskId);
+          setSelectedTask(null);
+        }}
+      />
     </div>
   );
 }

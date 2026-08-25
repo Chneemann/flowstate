@@ -20,6 +20,7 @@ import { ColumnConfig, Task, TaskStatus } from "@/lib/types/task";
  * @property {Set<string>} [updatingTaskIds] - A set of task IDs currently undergoing updates.
  * @property {(taskId: string, targetStatus: TaskStatus) => void} [onTaskMove] - Callback triggered when a task is moved to a new status column.
  * @property {(taskId: string) => void} [onTaskDelete] - Callback triggered when a task deletion is requested.
+ * @property {(task: Task) => void} [onTaskClick] - Callback triggered when a task card is clicked to view details.
  */
 export interface ColumnProps extends ColumnConfig {
   count: number;
@@ -27,6 +28,7 @@ export interface ColumnProps extends ColumnConfig {
   updatingTaskIds?: Set<string>;
   onTaskMove?: (taskId: string, targetStatus: TaskStatus) => void;
   onTaskDelete?: (taskId: string) => void;
+  onTaskClick?: (task: Task) => void;
 }
 
 /**
@@ -103,6 +105,7 @@ export default function Column(props: ColumnProps) {
               isUpdating={props.updatingTaskIds?.has(task.id)}
               onStatusChange={props.onTaskMove}
               onDelete={props.onTaskDelete}
+              onTaskClick={props.onTaskClick}
             />
           ))
         )}
