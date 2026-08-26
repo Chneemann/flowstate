@@ -36,7 +36,7 @@ interface TaskModalProps {
 
 /**
  * Renders a full task detail modal with status indicators, priority details, description, assignees, and creator-only action buttons.
- * Integrates keydown listeners to dismiss the modal on pressing the Escape key.
+ * Supports ESC key navigation and updates URL query parameters dynamically.
  *
  * @param {TaskModalProps} props - The component props.
  * @returns {JSX.Element | null} The rendered modal component or null when no task is selected.
@@ -46,13 +46,13 @@ export default function TaskModal({ task, onClose, onDelete }: TaskModalProps) {
 
   useEffect(() => {
     /**
-     * Keyboard event handler closing the modal dialog when pressing the Escape key.
+     * Attaches a global keydown event listener to close the modal when the Escape key is pressed.
      *
-     * @param {KeyboardEvent} e - The global window keydown event.
+     * @param {KeyboardEvent} e - The keyboard event object.
      */
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        handleClose();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -60,6 +60,43 @@ export default function TaskModal({ task, onClose, onDelete }: TaskModalProps) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [onClose]);
+
+  useEffect(() => {
+    /**
+     * Updates the URL search parameters to include `modal=task-detail` when a task is selected,
+     * maintaining modal state in the browser history without triggering a full page re-render.
+     */
+    if (task) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("modal") !== "task-detail") {
+        params.set("modal", "task-detail");
+        window.history.replaceState(
+          {},
+          "",
+          `${window.location.pathname}?${params.toString()}`,
+        );
+      }
+    }
+  }, [task]);
+
+  /**
+   * Removes modal query parameters from the browser location history without causing a Next.js soft navigation, then triggers onClose.
+   */
+  const handleClose = () => {
+    const params = new URLSearchParams(window.location.search);
+    params.delete("modal");
+    const newQuery = params.toString();
+
+    window.history.replaceState(
+      {},
+      "",
+      newQuery
+        ? `${window.location.pathname}?${newQuery}`
+        : window.location.pathname,
+    );
+
+    onClose();
+  };
 
   if (!task) return null;
 
@@ -72,7 +109,7 @@ export default function TaskModal({ task, onClose, onDelete }: TaskModalProps) {
   return (
     <div
       className="fixed inset-0 z-49 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         className="bg-card border border-border rounded-3xl max-w-xl w-full max-h-[80vh] md:max-h-[90vh] shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden"
@@ -114,7 +151,7 @@ export default function TaskModal({ task, onClose, onDelete }: TaskModalProps) {
             </div>
 
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-foreground-muted hover:text-foreground p-2 rounded-xl bg-background/50 hover:bg-background border border-border transition-all cursor-pointer shrink-0"
               aria-label="Close modal"
             >
@@ -238,7 +275,7 @@ export default function TaskModal({ task, onClose, onDelete }: TaskModalProps) {
             <button
               onClick={() => {
                 onDelete?.(task.id);
-                onClose();
+                handleClose();
               }}
               className="inline-flex items-center space-x-2 px-4 py-2.5 text-sm font-medium bg-destructive-bg text-destructive border border-destructive-border hover:bg-destructive/20 rounded-xl transition-all cursor-pointer"
             >

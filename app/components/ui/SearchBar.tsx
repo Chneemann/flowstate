@@ -39,6 +39,7 @@ export default function SearchBar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isModalOpen = searchParams.get("modal") !== null;
 
   // Check whether the current route supports the search
   const isSearchableRoute = SEARCHABLE_ROUTES.some(
@@ -58,6 +59,9 @@ export default function SearchBar({
   useEffect(() => {
     if (!isSearchableRoute) return;
 
+    /**
+     * Updates the URL search parameters based on the current local input value.
+     */
     const timer = setTimeout(() => {
       if (localValue !== searchQuery) {
         const params = new URLSearchParams(searchParams.toString());
@@ -83,7 +87,7 @@ export default function SearchBar({
     isSearchableRoute,
   ]);
 
-  if (!isSearchableRoute) {
+  if (!isSearchableRoute || isModalOpen) {
     return null;
   }
 
