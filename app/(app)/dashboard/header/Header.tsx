@@ -5,11 +5,11 @@
 
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 import TrashLink from "./TrashLink";
-import NewTaskButton from "./NewTaskButton";
 import { useState } from "react";
 import ActionDropZones from "./ActionDropZones";
+import { ActionButton } from "@/app/components/ui/buttons/ActionButton";
 
 /**
  * Renders the dashboard header section featuring title text, drop zones,
@@ -46,7 +46,9 @@ export default function Header({
         />
         {!isDraggingActive && (
           <div className="flex items-center gap-3 animate-in fade-in duration-200">
-            <NewTaskButton />
+            <ActionButton href="/tasks?task=new" variant="primary" icon={Plus}>
+              New Task
+            </ActionButton>
             <TrashLink />
           </div>
         )}

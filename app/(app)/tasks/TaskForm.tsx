@@ -5,8 +5,7 @@
 
 "use client";
 
-import { AlertCircle } from "lucide-react";
-import Link from "next/link";
+import { AlertCircle, X } from "lucide-react";
 import { DbTask, TaskStatus } from "@/lib/types/task";
 import { useTaskForm } from "./useTaskForm";
 import TaskHeader from "./task/TaskHeader";
@@ -14,6 +13,7 @@ import TaskBasicInfo from "./task/TaskBasicInfo";
 import TaskOptions from "./task/TaskOptions";
 import TaskAssignees from "./task/TaskAssignees";
 import TaskDateTime from "./task/TaskDateTime";
+import { ActionButton } from "@/app/components/ui/buttons/ActionButton";
 
 /**
  * Properties for the TaskForm component.
@@ -95,12 +95,9 @@ export default function TaskForm({
       </div>
 
       <div className="flex items-center justify-end gap-3">
-        <Link
-          href="/dashboard"
-          className="px-4 py-2.5 rounded-xl font-medium text-sm border border-border hover:bg-background-muted transition-colors"
-        >
+        <ActionButton href="/dashboard" variant="secondary" icon={X}>
           Cancel
-        </Link>
+        </ActionButton>
         <button
           type="submit"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm text-black bg-primary hover:bg-primary-hover active:scale-95 transition-all duration-200 cursor-pointer disabled:opacity-50"
