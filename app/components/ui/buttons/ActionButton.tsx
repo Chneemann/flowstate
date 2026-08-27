@@ -1,0 +1,58 @@
+/**
+ * @file app/components/ui/buttons/ActionButton.tsx
+ * @description Client/Server UI component rendering a styled link button with customizable variants and optional Lucide icons.
+ */
+
+import Link from "next/link";
+import { ReactNode } from "react";
+import { LucideIcon } from "lucide-react";
+
+/**
+ * Properties for the ActionButton component.
+ *
+ * @interface ActionButtonProps
+ * @property {string} href - The target URL path or external link.
+ * @property {"primary" | "secondary" | "danger"} [variant="primary"] - Visual style variant of the button.
+ * @property {ReactNode} children - Button label content or child nodes.
+ * @property {LucideIcon} [icon] - Optional Lucide icon component to display alongside text.
+ */
+interface ActionButtonProps {
+  href: string;
+  variant?: "primary" | "secondary" | "danger";
+  children: ReactNode;
+  icon?: LucideIcon;
+}
+
+/**
+ * Renders an accessible link styled as an action button with hover states and optional icons.
+ *
+ * @param {ActionButtonProps} props - The component props.
+ * @returns {JSX.Element} The rendered action button link component.
+ */
+export function ActionButton({
+  href,
+  variant = "primary",
+  children,
+  icon: Icon,
+}: ActionButtonProps) {
+  const baseStyles =
+    "group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 font-medium transition-all duration-200 ease-out active:scale-[0.97] px-4 py-2.5 rounded-xl text-sm tracking-wide shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer";
+
+  const variants = {
+    primary:
+      "bg-primary text-background font-semibold hover:bg-primary-hover hover:text-foreground hover:-translate-y-0.5 hover:shadow-md",
+    secondary:
+      "bg-card text-foreground border border-foreground-muted/50 hover:bg-background-muted hover:border-foreground hover:-translate-y-0.5",
+    danger:
+      "bg-destructive/15 text-destructive border border-destructive/30 hover:bg-destructive hover:text-foreground hover:border-destructive hover:-translate-y-0.5",
+  };
+
+  return (
+    <Link href={href} className={`${baseStyles} ${variants[variant]}`}>
+      {Icon && (
+        <Icon className="w-4 h-4 transition-transform duration-200 ease-out group-hover:scale-110 shrink-0" />
+      )}
+      <span>{children}</span>
+    </Link>
+  );
+}
