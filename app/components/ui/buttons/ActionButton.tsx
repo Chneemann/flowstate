@@ -7,6 +7,16 @@ import Link from "next/link";
 import { ReactNode, ButtonHTMLAttributes } from "react";
 import { LucideIcon } from "lucide-react";
 
+/**
+ * Properties for the ActionButton component.
+ *
+ * @interface ActionButtonProps
+ * @extends {ButtonHTMLAttributes<HTMLButtonElement>}
+ * @property {string} [href] - Optional navigation target URL. Renders a Next.js Link component if defined.
+ * @property {"primary" | "secondary" | "danger"} [variant="primary"] - Visual style variant of the button.
+ * @property {ReactNode} children - Button label content or child nodes.
+ * @property {LucideIcon} [icon] - Optional Lucide icon component to display alongside the text label.
+ */
 interface ActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   href?: string;
   variant?: "primary" | "secondary" | "danger";
@@ -14,6 +24,12 @@ interface ActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: LucideIcon;
 }
 
+/**
+ * Renders a customizable button or link element styled with Tailwind CSS, supporting variants, icons, and disabled states.
+ *
+ * @param {ActionButtonProps} props - The component props.
+ * @returns {JSX.Element} The rendered button or link component.
+ */
 export function ActionButton({
   href,
   variant = "primary",
@@ -50,7 +66,16 @@ export function ActionButton({
   // If an href is passed -> Link button
   if (href) {
     return (
-      <Link href={href} className={combinedStyles}>
+      <Link
+        href={disabled ? "#" : href}
+        aria-disabled={disabled}
+        onClick={(e) => {
+          if (disabled) e.preventDefault();
+        }}
+        className={`${combinedStyles} ${
+          disabled ? "pointer-events-none opacity-50" : ""
+        }`}
+      >
         {content}
       </Link>
     );

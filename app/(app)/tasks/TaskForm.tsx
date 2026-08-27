@@ -50,6 +50,7 @@ export default function TaskForm({
     form,
     error,
     isEditMode,
+    isSubmitting,
     todayString,
     updateField,
     handleAssigneeToggle,
@@ -95,10 +96,20 @@ export default function TaskForm({
       </div>
 
       <div className="flex items-center justify-end gap-3">
-        <ActionButton href="/dashboard" variant="secondary" icon={X}>
+        <ActionButton
+          href="/dashboard"
+          variant="secondary"
+          disabled={isSubmitting}
+          icon={X}
+        >
           Cancel
         </ActionButton>
-        <ActionButton type="submit" variant="primary" icon={Check}>
+        <ActionButton
+          type="submit"
+          variant="primary"
+          disabled={isSubmitting}
+          icon={Check}
+        >
           {isEditMode ? "Save Changes" : "Create Task"}
         </ActionButton>
       </div>

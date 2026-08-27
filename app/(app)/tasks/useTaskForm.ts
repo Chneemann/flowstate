@@ -23,7 +23,7 @@ export function useTaskForm(
   defaultStatus?: TaskStatus,
 ) {
   const router = useRouter();
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const isEditMode = mode === "edit" && initialData;
 
   const todayString = new Date().toISOString().split("T")[0];
@@ -121,6 +121,7 @@ export function useTaskForm(
     form,
     error,
     isEditMode,
+    isSubmitting: isPending,
     todayString,
     updateField,
     handleAssigneeToggle,
