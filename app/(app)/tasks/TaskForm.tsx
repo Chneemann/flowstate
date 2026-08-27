@@ -5,7 +5,7 @@
 
 "use client";
 
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle, Check, X } from "lucide-react";
 import { DbTask, TaskStatus } from "@/lib/types/task";
 import { useTaskForm } from "./useTaskForm";
 import TaskHeader from "./task/TaskHeader";
@@ -98,12 +98,9 @@ export default function TaskForm({
         <ActionButton href="/dashboard" variant="secondary" icon={X}>
           Cancel
         </ActionButton>
-        <button
-          type="submit"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm text-black bg-primary hover:bg-primary-hover active:scale-95 transition-all duration-200 cursor-pointer disabled:opacity-50"
-        >
+        <ActionButton type="submit" variant="primary" icon={Check}>
           {isEditMode ? "Save Changes" : "Create Task"}
-        </button>
+        </ActionButton>
       </div>
     </form>
   );
