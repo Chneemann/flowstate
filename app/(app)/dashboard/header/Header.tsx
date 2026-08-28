@@ -8,7 +8,7 @@
 import { Plus, Sparkles } from "lucide-react";
 import TrashLink from "./TrashLink";
 import { useState } from "react";
-import ActionDropZones from "./ActionDropZones";
+import DropZones from "./DropZones";
 import { ActionButton } from "@/app/components/ui/buttons/ActionButton";
 
 /**
@@ -40,7 +40,7 @@ export default function Header({
       </div>
 
       <div className="flex items-center gap-3">
-        <ActionDropZones
+        <DropZones
           onTaskDelete={onTaskDelete}
           onDragStateChange={setIsDraggingActive}
         />
