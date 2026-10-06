@@ -7,55 +7,67 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Footer from "@/app/components/layout/Footer";
-import { Zap, BarChart3, ShieldCheck, ArrowRight } from "lucide-react";
+import {
+  Zap,
+  BarChart3,
+  ShieldCheck,
+  ArrowRight,
+  type LucideIcon,
+} from "lucide-react";
+import { JSX } from "react/jsx-runtime";
 
 /**
- * Properties for a feature item displayed in the features showcase.
+ * Interface representing a feature item displayed in the features showcase.
  *
  * @interface Feature
- * @property {string} id - Unique identifier for the feature.
+ * @property {string} id - The unique identifier of the feature.
  * @property {string} title - The title of the feature.
- * @property {string} description - Explanatory text detailing the feature.
- * @property {React.ReactNode} icon - Icon element representing the feature.
+ * @property {string} description - The explanatory description of the feature.
+ * @property {LucideIcon} icon - The Lucide icon component associated with the feature.
  */
 interface Feature {
   id: string;
   title: string;
   description: string;
-  icon: React.ReactNode;
+  icon: LucideIcon;
 }
 
+/**
+ * List of key features showcased on the landing page.
+ *
+ * @type {Feature[]}
+ */
 const FEATURES: Feature[] = [
   {
     id: "velocity",
     title: "Hyper Velocity",
     description:
       "Eliminate switching friction with optimized workflows keeping you directly in the zone.",
-    icon: <Zap className="w-5 h-5" />,
+    icon: Zap,
   },
   {
     id: "metrics",
     title: "Clean Metrics",
     description:
       "Visualize focus states and process summaries clearly without visual clutter.",
-    icon: <BarChart3 className="w-5 h-5" />,
+    icon: BarChart3,
   },
   {
     id: "security",
     title: "Full Security",
     description:
       "Encrypted data and robust authentication guards protecting your workspace session.",
-    icon: <ShieldCheck className="w-5 h-5" />,
+    icon: ShieldCheck,
   },
 ];
 
 /**
- * Renders the welcome landing page with session validation and responsive layout.
+ * Renders the welcome landing page, redirecting authenticated users to the summary page.
  *
  * @async
- * @returns {Promise<JSX.Element>} The rendered welcome page component.
+ * @returns {Promise<JSX.Element>} The rendered welcome landing page component.
  */
-export default async function WelcomePage() {
+export default async function WelcomePage(): Promise<JSX.Element> {
   const session = typeof auth === "function" ? await auth() : null;
 
   if (session) {
@@ -96,7 +108,7 @@ export default async function WelcomePage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-3 w-full max-w-xs sm:max-w-none mx-auto">
             <Link
-              href="/register/"
+              href="/register"
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg bg-primary text-background shadow-md hover:bg-primary-hover transition-colors duration-200 gap-2"
             >
               Get Started
@@ -104,7 +116,7 @@ export default async function WelcomePage() {
             </Link>
 
             <Link
-              href="/login/"
+              href="/login"
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg border border-border bg-card hover:bg-border/40 text-foreground transition-colors duration-200"
             >
               Sign In
@@ -118,20 +130,20 @@ export default async function WelcomePage() {
           className="mt-8 sm:mt-12 w-full max-w-4xl"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-            {FEATURES.map((feature) => (
+            {FEATURES.map(({ id, title, description, icon: Icon }) => (
               <article
-                key={feature.id}
+                key={id}
                 className="group relative flex flex-row sm:flex-col items-center sm:items-start gap-4 sm:gap-0 p-4 sm:p-5 rounded-xl border border-border bg-card backdrop-blur-sm transition-all duration-300 hover:border-primary/40"
               >
                 <div className="shrink-0 sm:mb-3 rounded-lg p-2.5 bg-background text-primary transition-colors group-hover:bg-primary group-hover:text-background">
-                  {feature.icon}
+                  <Icon className="w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="text-sm sm:text-base font-semibold tracking-tight text-foreground mb-0.5 sm:mb-1">
-                    {feature.title}
+                    {title}
                   </h2>
                   <p className="text-xs text-foreground-muted leading-relaxed">
-                    {feature.description}
+                    {description}
                   </p>
                 </div>
               </article>
