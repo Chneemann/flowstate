@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginAsGuest, loginUser } from "@/lib/services/auth.service";
+import { Loader2, UserCheck, KeyRound } from "lucide-react";
 
 /**
  * Renders the login page containing the authentication form, error handling,
@@ -56,7 +57,7 @@ export default function LoginPage() {
    * @async
    * @param {React.SubmitEvent<HTMLFormElement>} e - The form submission event.
    */
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
@@ -85,11 +86,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-dvh w-full items-center justify-center">
-      <div className="w-full max-w-sm p-6 space-y-4 border border-border rounded-xl bg-card backdrop-blur-md">
-        <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">Flowstate Login</h1>
-          <p className="text-sm text-foreground-muted">Sign in to continue.</p>
+    <div className="relative min-h-dvh w-full flex flex-col items-center justify-center p-4 overflow-x-hidden bg-background text-foreground selection:bg-primary selection:text-background">
+      {/* Background Ambient Glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 -top-20 sm:-top-32 -z-10 transform-gpu overflow-hidden blur-2xl sm:blur-3xl"
+      >
+        <div
+          className="relative left-[calc(50%-10rem)] aspect-1155/678 w-[20rem] sm:w-50rem -translate-x-1/2 rotate-30deg bg-linear-to-tr from-accent to-primary opacity-20 sm:opacity-15"
+          style={{
+            clipPath:
+              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+          }}
+        />
+      </div>
+
+      {/* Login Card Container */}
+      <div className="w-full max-w-sm p-6 sm:p-8 space-y-6 border border-border rounded-2xl bg-card/80 backdrop-blur-md shadow-xl">
+        <div className="space-y-1.5 text-center">
+          <h1 className="text-2xl font-extrabold tracking-tight">
+            Sign in to{" "}
+            <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
+              Flowstate
+            </span>
+          </h1>
+          <p className="text-xs sm:text-sm text-foreground-muted">
+            Enter your credentials to access your workspace.
+          </p>
         </div>
 
         {error && (
@@ -102,46 +125,64 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="block space-y-2">
-            <span className="text-xs font-medium text-foreground-muted">
-              E-Mail
-            </span>
+          <div className="space-y-1.5">
+            <label
+              htmlFor="email"
+              className="block text-xs font-medium text-foreground-muted"
+            >
+              Email Address
+            </label>
             <input
+              id="email"
               name="email"
               type="email"
               placeholder="name@example.com"
               maxLength={255}
               required
-              className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
+              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-border bg-background/50 text-foreground placeholder:text-foreground-muted/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
             />
-          </label>
+          </div>
 
-          <label className="block space-y-2">
-            <span className="text-xs font-medium text-foreground-muted">
-              Passwort
-            </span>
+          <div className="space-y-1.5">
+            <label
+              htmlFor="password"
+              className="block text-xs font-medium text-foreground-muted"
+            >
+              Password
+            </label>
             <input
+              id="password"
               name="password"
               type="password"
-              placeholder="•••••••••••••"
+              placeholder="••••••••••••"
               maxLength={72}
               required
-              className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:border-foreground"
+              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-border bg-background/50 text-foreground placeholder:text-foreground-muted/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
             />
-          </label>
+          </div>
 
           <button
             type="submit"
             disabled={loadingType !== null}
-            className="w-full py-2 text-sm font-medium rounded-lg bg-foreground text-background hover:opacity-70 transition-opacity disabled:opacity-20 cursor-pointer disabled:cursor-auto"
+            className="w-full py-2.5 px-4 text-sm font-semibold rounded-lg bg-primary text-background shadow-md hover:bg-primary-hover transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
           >
-            {loadingType === "credentials" ? "Signing in..." : "Sign In"}
+            {loadingType === "credentials" ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              <>
+                <KeyRound className="w-4 h-4" />
+                Sign In
+              </>
+            )}
           </button>
         </form>
 
         <div className="relative flex items-center">
           <div className="grow border-t border-border"></div>
-          <span className="shrink mx-4 text-xs text-foreground-muted uppercase">
+          <span className="shrink mx-3 text-[10px] font-semibold tracking-wider text-foreground-muted uppercase">
             or
           </span>
           <div className="grow border-t border-border"></div>
@@ -151,16 +192,27 @@ export default function LoginPage() {
           type="button"
           disabled={loadingType !== null}
           onClick={handleGuestLogin}
-          className="w-full py-2 text-sm font-medium rounded-lg bg-background hover:opacity-70 transition-opacity disabled:opacity-20 cursor-pointer disabled:cursor-auto border border-border"
+          className="w-full py-2.5 px-4 text-sm font-semibold rounded-lg border border-border bg-background/50 hover:bg-border/40 text-foreground transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
         >
-          {loadingType === "guest"
-            ? "Signing in as Guest..."
-            : "Sign in as Guest"}
+          {loadingType === "guest" ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Signing in as Guest...
+            </>
+          ) : (
+            <>
+              <UserCheck className="w-4 h-4" />
+              Sign in as Guest
+            </>
+          )}
         </button>
 
-        <div className="text-center text-xs text-foreground-muted">
-          Don't have an account yet?{" "}
-          <Link href="/register/" className="text-foreground hover:underline">
+        <div className="text-center text-xs text-foreground-muted pt-1">
+          Don&apos;t have an account yet?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-foreground hover:text-primary transition-colors hover:underline"
+          >
             Register
           </Link>
         </div>
