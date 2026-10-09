@@ -1,6 +1,6 @@
 /**
  * @file app/components/ui/buttons/ActionButton.tsx
- * @description Client/Server UI component rendering a styled link button with customizable variants and optional Lucide icons.
+ * @description UI component rendering a styled link button or native button with customizable variants and optional Lucide icons.
  */
 
 import Link from "next/link";
@@ -12,22 +12,25 @@ import { LucideIcon } from "lucide-react";
  *
  * @interface ActionButtonProps
  * @extends {ButtonHTMLAttributes<HTMLButtonElement>}
- * @property {string} [href] - Optional navigation target URL. Renders a Next.js Link component if defined.
- * @property {"primary" | "secondary" | "danger"} [variant="primary"] - Visual style variant of the button.
- * @property {ReactNode} children - Button label content or child nodes.
- * @property {LucideIcon} [icon] - Optional Lucide icon component to display alongside the text label.
+ *
+ * @property {string} [href] Optional navigation target URL. Renders a Next.js Link component if defined.
+ * @property {"primary" | "secondary" | "danger"} [variant="primary"] Visual style variant of the button.
+ * @property {ReactNode} children Button label content or child nodes.
+ * @property {LucideIcon} [icon] Optional Lucide icon component to display alongside the text label.
+ * @property {"start" | "end"} [iconPosition="end"] Explicitly sets the icon position (defaults to "end").
  */
 interface ActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   href?: string;
   variant?: "primary" | "secondary" | "danger";
   children: ReactNode;
   icon?: LucideIcon;
+  iconPosition?: "start" | "end";
 }
 
 /**
  * Renders a customizable button or link element styled with Tailwind CSS, supporting variants, icons, and disabled states.
  *
- * @param {ActionButtonProps} props - The component props.
+ * @param {ActionButtonProps} props The component props.
  * @returns {JSX.Element} The rendered button or link component.
  */
 export function ActionButton({
@@ -35,6 +38,7 @@ export function ActionButton({
   variant = "primary",
   children,
   icon: Icon,
+  iconPosition = "start",
   type = "button",
   disabled,
   className = "",
@@ -49,17 +53,20 @@ export function ActionButton({
     secondary:
       "bg-card text-foreground border border-foreground-muted/50 hover:bg-background-muted hover:border-foreground hover:-translate-y-0.5",
     danger:
-      "bg-destructive/15 text-destructive border border-destructive/30 hover:bg-destructive hover:text-foreground hover.border-destructive hover:-translate-y-0.5",
+      "bg-destructive/15 text-destructive border border-destructive/30 hover:bg-destructive hover:text-foreground hover:border-destructive hover:-translate-y-0.5",
   };
 
   const combinedStyles = `${baseStyles} ${variants[variant]} ${className}`;
 
+  const renderIcon = Icon ? (
+    <Icon className="w-4 h-4 transition-transform duration-200 ease-out group-hover:scale-110 shrink-0" />
+  ) : null;
+
   const content = (
     <>
-      {Icon && (
-        <Icon className="w-4 h-4 transition-transform duration-200 ease-out group-hover:scale-110 shrink-0" />
-      )}
+      {iconPosition === "start" && renderIcon}
       <span>{children}</span>
+      {iconPosition === "end" && renderIcon}
     </>
   );
 
@@ -69,9 +76,6 @@ export function ActionButton({
       <Link
         href={disabled ? "#" : href}
         aria-disabled={disabled}
-        onClick={(e) => {
-          if (disabled) e.preventDefault();
-        }}
         className={`${combinedStyles} ${
           disabled ? "pointer-events-none opacity-50" : ""
         }`}
