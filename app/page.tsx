@@ -5,7 +5,6 @@
 
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import Footer from "@/app/components/layout/Footer";
 import {
   Zap,
@@ -15,6 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { JSX } from "react/jsx-runtime";
+import { ActionButton } from "./components/ui/buttons/ActionButton";
 
 /**
  * Interface representing a feature item displayed in the features showcase.
@@ -82,7 +82,7 @@ export default async function WelcomePage(): Promise<JSX.Element> {
         className="pointer-events-none absolute inset-x-0 -top-20 sm:-top-32 -z-10 transform-gpu overflow-hidden blur-2xl sm:blur-3xl"
       >
         <div
-          className="relative left-[calc(50%-10rem)] aspect-1155/678 w-20rem sm:w-50rem -translate-x-1/2 rotate-30deg bg-linear-to-tr from-accent to-primary opacity-20 sm:opacity-15"
+          className="relative left-[calc(50%-10rem)] aspect-1155/678 w-[20rem] sm:w-50rem -translate-x-1/2 rotate-30deg bg-linear-to-tr from-accent to-primary opacity-20 sm:opacity-15"
           style={{
             clipPath:
               "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
@@ -107,20 +107,18 @@ export default async function WelcomePage(): Promise<JSX.Element> {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-3 w-full max-w-xs sm:max-w-none mx-auto">
-            <Link
+            <ActionButton
               href="/register"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg bg-primary text-background shadow-md hover:bg-primary-hover transition-colors duration-200 gap-2"
+              variant="primary"
+              icon={ArrowRight}
+              iconPosition="end"
             >
               Get Started
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            </ActionButton>
 
-            <Link
-              href="/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg border border-border bg-card hover:bg-border/40 text-foreground transition-colors duration-200"
-            >
+            <ActionButton href="/login" variant="secondary">
               Sign In
-            </Link>
+            </ActionButton>
           </div>
         </section>
 
