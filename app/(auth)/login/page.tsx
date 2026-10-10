@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginAsGuest, loginUser } from "@/lib/services/auth.service";
+import { ActionButton } from "@/app/components/ui/buttons/ActionButton";
 import { Loader2, UserCheck, KeyRound } from "lucide-react";
 
 /**
@@ -57,7 +58,7 @@ export default function LoginPage() {
    * @async
    * @param {React.SubmitEvent<HTMLFormElement>} e - The form submission event.
    */
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
@@ -161,23 +162,15 @@ export default function LoginPage() {
             />
           </div>
 
-          <button
+          <ActionButton
             type="submit"
+            variant="primary"
             disabled={loadingType !== null}
-            className="w-full py-2.5 px-4 text-sm font-semibold rounded-lg bg-primary text-background shadow-md hover:bg-primary-hover transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+            icon={loadingType === "credentials" ? Loader2 : KeyRound}
+            className="w-full sm:w-full"
           >
-            {loadingType === "credentials" ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              <>
-                <KeyRound className="w-4 h-4" />
-                Sign In
-              </>
-            )}
-          </button>
+            {loadingType === "credentials" ? "Signing in..." : "Sign In"}
+          </ActionButton>
         </form>
 
         <div className="relative flex items-center">
@@ -188,24 +181,18 @@ export default function LoginPage() {
           <div className="grow border-t border-border"></div>
         </div>
 
-        <button
+        <ActionButton
           type="button"
+          variant="secondary"
           disabled={loadingType !== null}
           onClick={handleGuestLogin}
-          className="w-full py-2.5 px-4 text-sm font-semibold rounded-lg border border-border bg-background/50 hover:bg-border/40 text-foreground transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+          icon={loadingType === "guest" ? Loader2 : UserCheck}
+          className="w-full sm:w-full"
         >
-          {loadingType === "guest" ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Signing in as Guest...
-            </>
-          ) : (
-            <>
-              <UserCheck className="w-4 h-4" />
-              Sign in as Guest
-            </>
-          )}
-        </button>
+          {loadingType === "guest"
+            ? "Signing in as Guest..."
+            : "Sign in as Guest"}
+        </ActionButton>
 
         <div className="text-center text-xs text-foreground-muted pt-1">
           Don&apos;t have an account yet?{" "}
