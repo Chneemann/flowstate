@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/services/auth.service";
+import { ActionButton } from "@/app/components/ui/buttons/ActionButton";
 import { Loader2, UserPlus } from "lucide-react";
 import { JSX } from "react/jsx-runtime";
 
@@ -185,23 +186,15 @@ export default function RegisterPage(): JSX.Element {
             />
           </div>
 
-          <button
+          <ActionButton
             type="submit"
+            variant="primary"
             disabled={loading}
-            className="w-full py-2.5 px-4 text-sm font-semibold rounded-lg bg-primary text-background shadow-md hover:bg-primary-hover transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed pt-2"
+            icon={loading ? Loader2 : UserPlus}
+            className="w-full sm:w-full"
           >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Creating account...
-              </>
-            ) : (
-              <>
-                <UserPlus className="w-4 h-4" />
-                Sign Up
-              </>
-            )}
-          </button>
+            {loading ? "Creating account..." : "Sign Up"}
+          </ActionButton>
         </form>
 
         <div className="text-center text-xs text-foreground-muted pt-1">
